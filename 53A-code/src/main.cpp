@@ -75,10 +75,12 @@ void autonomous() {}
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(2, true);
-	pros::Motor left_mtr2(4, true);
-	pros::Motor right_mtr(3, false);
-	pros::Motor right_mtr2(6, false);
+	pros::Motor left_mtr_front(2, true);
+	pros::Motor left_mtr_middle(4, true);
+	pros::Motor left_mtr_back(5, true);
+	pros::Motor right_mtr_front(3, false);
+	pros::Motor right_mtr_middle(6, false);
+	pros::Motor right_mtr_back(1, false);
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -87,10 +89,12 @@ void opcontrol() {
 		int left = master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
 		int right = master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
 
-		left_mtr = left;
-		left_mtr2 = left;
-		right_mtr = right;
-		right_mtr2 = right;
+		left_mtr_front = left;
+		left_mtr_middle = left;
+		left_mtr_back = left;
+		right_mtr_front = right;
+		right_mtr_middle = right;
+		right_mtr_back = right;
 		
 		pros::delay(20);
 	}
