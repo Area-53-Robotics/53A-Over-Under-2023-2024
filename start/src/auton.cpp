@@ -2,22 +2,21 @@
 #include "devices.h"
 #include "auton.h"
 
-void moveBot(float msecs, int x) {
-    front_left_mtr = x;
-    middle_left_mtr = x;
-    back_left_mtr = x;
-    front_right_mtr = x;
-    middle_right_mtr = x;
-    back_right_mtr = x;
+void moveBot (float msecs, int left_motor_speed, int right_motor_speed) {
+    front_left_mtr = left_motor_speed;
+	middle_left_mtr = left_motor_speed;
+	back_left_mtr = left_motor_speed;
+	front_right_mtr = right_motor_speed;
+	middle_right_mtr = right_motor_speed;
+	back_right_mtr = right_motor_speed;
 
-    pros::delay(20);
+    pros::delay(msecs);
 
-    front_left_mtr.brake();
-    middle_left_mtr.brake();
-    back_left_mtr.brake();
-    front_right_mtr.brake();
-    middle_right_mtr.brake();
-    back_right_mtr.brake();
-    
+    front_left_mtr = 0;
+	middle_left_mtr = 0;
+	back_left_mtr = 0;
+	front_right_mtr = 0;
+	middle_right_mtr = 0;
+	back_right_mtr = 0;
 }
 

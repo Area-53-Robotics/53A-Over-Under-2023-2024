@@ -8,3 +8,6 @@ inline pros::Motor back_left_mtr(11, true);
 inline pros::Motor front_right_mtr(20, false);
 inline pros::Motor middle_right_mtr(12, true);
 inline pros::Motor back_right_mtr(1, false);
+
+inline pros::Motor left_intake_mtr(5, true);
+inline pros::Motor right_intake_mtr(3, false);

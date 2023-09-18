@@ -2,6 +2,8 @@
 #include "devices.h"
 #include "auton.h"
 
+bool starting_point = true;
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -12,9 +14,11 @@ void on_center_button() {
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
+		pros::lcd::set_text(1, "Left Starting Point");
+		starting_point = true;
 	} else {
-		pros::lcd::clear_line(2);
+		pros::lcd::set_text(1, "Right Starting Point");
+		starting_point = false;
 	}
 }
 
@@ -26,7 +30,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::lcd::set_text(1, "Started");
 
 	pros::lcd::register_btn1_cb(on_center_button);
 }
@@ -36,7 +40,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -47,7 +53,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -61,7 +69,14 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	moveBot(100, 100);
+	if (starting_point == true) {
+		moveBot(20, -127, 127);
+		pros::lcd::set_text(2, "Auton from Left Starting Point");
+	}
+
+	if (starting_point == false) {
+		pros::lcd::set_text(2, "Auton from Right Starting Point");
+	}
 }
 
 /**
@@ -81,6 +96,7 @@ void autonomous() {
 void opcontrol() {
 	
 	while (true) {
+
     	int left = master.get_analog(ANALOG_RIGHT_Y) + master.get_analog(ANALOG_LEFT_X);
 		int right = master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X);
 
@@ -90,6 +106,23 @@ void opcontrol() {
 		front_right_mtr = right;
 		middle_right_mtr = right;
 		back_right_mtr = right;
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      		left_intake_mtr = -50;
+			right_intake_mtr = -50;
+    	}
+		else {
+			left_intake_mtr = 0;
+			right_intake_mtr = 0;
+		}
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      		left_intake_mtr = 50;
+			right_intake_mtr = 50;
+    	}
+		else {
+			left_intake_mtr = 0;
+			right_intake_mtr = 0;
+		}
 
 		pros::delay(20);
 	}

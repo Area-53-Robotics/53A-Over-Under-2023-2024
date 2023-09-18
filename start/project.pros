@@ -310,7 +310,7 @@
     },
     "upload_options": {
       "description": "Arcade Drive 2023",
-      "after": "run",
+      "after": "screen",
       "icon": "planet"
     }
   }
