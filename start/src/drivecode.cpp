@@ -33,6 +33,10 @@ void initialize() {
 	pros::lcd::set_text(1, "Started");
 
 	pros::lcd::register_btn1_cb(on_center_button);
+
+  	imu_sensor.reset();
+
+	pros::lcd::set_text(3, "IMU Calibrated");
 }
 
 /**
@@ -70,12 +74,17 @@ void competition_initialize() {
  */
 void autonomous() {
 	if (starting_point == true) {
-		moveBot(20, -127, 127);
+		moveBot(10);
 		pros::lcd::set_text(2, "Auton from Left Starting Point");
 	}
 
 	if (starting_point == false) {
 		pros::lcd::set_text(2, "Auton from Right Starting Point");
+	}
+
+	while (true) {
+		float velocity = motor_group.get_actual_velocities();
+		pros::delay(20);
 	}
 }
 
@@ -97,16 +106,14 @@ void opcontrol() {
 	
 	while (true) {
 
+		//Arcade Drive
     	int left = master.get_analog(ANALOG_RIGHT_Y) + master.get_analog(ANALOG_LEFT_X);
 		int right = master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X);
 
-		front_left_mtr = left;
-		middle_left_mtr = left;
-		back_left_mtr = left;
-		front_right_mtr = right;
-		middle_right_mtr = right;
-		back_right_mtr = right;
+		left_motors = left;
+		right_motors = right;
 
+		//Controls Intake (Inward)
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       		left_intake_mtr = -50;
 			right_intake_mtr = -50;
@@ -115,6 +122,8 @@ void opcontrol() {
 			left_intake_mtr = 0;
 			right_intake_mtr = 0;
 		}
+
+		//Controls Intake (Outward)
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       		left_intake_mtr = 50;
 			right_intake_mtr = 50;
@@ -123,6 +132,16 @@ void opcontrol() {
 			left_intake_mtr = 0;
 			right_intake_mtr = 0;
 		}
+
+		bool pistonValue = false;
+
+		//Controls Flaps
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      		pistonValue = !pistonValue;
+    	}
+		
+		left_piston.set_value(pistonValue);
+		right_piston.set_value(pistonValue);
 
 		pros::delay(20);
 	}
