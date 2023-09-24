@@ -32,11 +32,11 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Started");
 
-	pros::lcd::register_btn1_cb(on_center_button);
+	//pros::lcd::register_btn1_cb(on_center_button);
 
-  	imu_sensor.reset();
+  	//imu_sensor.reset();
 
-	pros::lcd::set_text(3, "IMU Calibrated");
+	//pros::lcd::set_text(3, "IMU Calibrated");
 }
 
 /**
@@ -74,7 +74,7 @@ void competition_initialize() {
  */
 void autonomous() {
 	if (starting_point == true) {
-		moveBot(10);
+		//moveBot(10);
 		pros::lcd::set_text(2, "Auton from Left Starting Point");
 	}
 
@@ -83,7 +83,6 @@ void autonomous() {
 	}
 
 	while (true) {
-		float velocity = motor_group.get_actual_velocities();
 		pros::delay(20);
 	}
 }
@@ -103,9 +102,11 @@ void autonomous() {
  */
 
 void opcontrol() {
+
+	//bool pistonValue = false;
 	
 	while (true) {
-
+		
 		//Arcade Drive
     	int left = master.get_analog(ANALOG_RIGHT_Y) + master.get_analog(ANALOG_LEFT_X);
 		int right = master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X);
@@ -113,36 +114,29 @@ void opcontrol() {
 		left_motors = left;
 		right_motors = right;
 
-		//Controls Intake (Inward)
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      		left_intake_mtr = -50;
-			right_intake_mtr = -50;
-    	}
-		else {
-			left_intake_mtr = 0;
-			right_intake_mtr = 0;
-		}
-
-		//Controls Intake (Outward)
+		//Controls Intake
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      		left_intake_mtr = 50;
-			right_intake_mtr = 50;
+      		intake_motors = 50;
     	}
-		else {
-			left_intake_mtr = 0;
-			right_intake_mtr = 0;
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+			intake_motors = -50;
 		}
-
-		bool pistonValue = false;
-
+		else {
+			intake_motors = 0;
+		}
+		
 		//Controls Flaps
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      		pistonValue = !pistonValue;
+      		pistons.set_value(true);
+			printf("something\n");
     	}
-		
-		left_piston.set_value(pistonValue);
-		right_piston.set_value(pistonValue);
+
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      		pistons.set_value(false);
+			printf("m\n");
+    	}
 
 		pros::delay(20);
 	}
+
 }

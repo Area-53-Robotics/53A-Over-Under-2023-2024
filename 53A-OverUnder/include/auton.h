@@ -2,4 +2,4 @@
 
 void moveBot (float distancein);
 
-void rotate (float angle, turnType direction, float margin);
+//void rotate (float angle, turnType direction, float margin);
