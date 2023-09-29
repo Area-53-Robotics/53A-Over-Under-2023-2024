@@ -103,7 +103,7 @@ void autonomous() {
 
 void opcontrol() {
 
-	//bool pistonValue = false;
+	bool pistonValue = false;
 	
 	while (true) {
 		
@@ -127,13 +127,9 @@ void opcontrol() {
 		
 		//Controls Flaps
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      		pistons.set_value(true);
+      		pistonValue = !pistonValue;
+			pistons.set_value(pistonValue);
 			printf("something\n");
-    	}
-
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-      		pistons.set_value(false);
-			printf("m\n");
     	}
 
 		pros::delay(20);
