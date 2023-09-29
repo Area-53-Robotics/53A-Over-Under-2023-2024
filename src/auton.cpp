@@ -1,13 +1,17 @@
 #include "main.h"
 #include "devices.h"
 #include "auton.h"
+#include <cmath>
 
-/*
-void moveBot (float distancin) {
+void moveBot (float distancein) {
     
 	while (true) {
 		
-		float position = left_motors.get_position();
+		float getRotation = imu_sensor.get_heading();
+
+		float pi = M_PI;
+		float circumference = pi*2*2;
+		float position = (getRotation/360)*circumference;
 
 		float error = distancein - position;
 		float kP = 0.5;
@@ -20,5 +24,3 @@ void moveBot (float distancin) {
 		left_motors  = power;
 	}
 }
-*/
-

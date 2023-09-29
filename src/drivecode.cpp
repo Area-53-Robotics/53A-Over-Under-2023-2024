@@ -73,8 +73,11 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+	//resets sensor (hopefully)
+	imu_sensor.reset();
+
 	if (starting_point == true) {
-		//moveBot(10);
+		moveBot(10);
 		pros::lcd::set_text(2, "Auton from Left Starting Point");
 	}
 
@@ -103,7 +106,9 @@ void autonomous() {
 
 void opcontrol() {
 
+	rotation_sensor = reset();
 	bool pistonValue = false;
+	bool cataSpin = false;
 	
 	while (true) {
 		
@@ -124,7 +129,35 @@ void opcontrol() {
 		else {
 			intake_motors = 0;
 		}
+
+		int rotationPosition = rotation_sensor.get_position()
+
+		if (rotationPosition != 0) {
+			rotation_sensor.set_position(0)
+		}
+
+		//Always shoots
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			cataSpin = !cataSpin;
+    	}
 		
+		if (cata_spin = true) {
+			rotation_sensor = reset();
+			cata_motors = 127;
+		}
+
+		if (cata_spin = false); {
+			cata_motors = 0;
+			rotation_sensor.set_position(0);
+		}
+
+		//Shoots when pressed, then resets
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      		cata_motor = 127;
+			pros::delay(10);
+			cata_motor = 0;
+    	}
+
 		//Controls Flaps
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       		pistonValue = !pistonValue;
