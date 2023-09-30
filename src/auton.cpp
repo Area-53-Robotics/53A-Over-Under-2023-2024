@@ -24,3 +24,10 @@ void moveBot (float distancein) {
 		left_motors  = power;
 	}
 }
+
+void turnBot (float degreesTurned) {
+
+	while (true) {
+		
+	}
+}

@@ -12,7 +12,7 @@ inline pros::Motor_Group cata_motors ({-6, 7});
 
 //Sensors
 inline pros::Imu imu_sensor(4);
-inline pros::Rotation rotation_sensor(ROTATION_PORT);
+inline pros::Rotation rotation_sensor(8);
 
 //Pneumatics
 inline pros::ADIDigitalOut pistons ('B');

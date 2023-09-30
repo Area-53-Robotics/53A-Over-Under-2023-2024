@@ -106,9 +106,10 @@ void autonomous() {
 
 void opcontrol() {
 
-	rotation_sensor = reset();
-	bool pistonValue = false;
+	rotation_sensor.reset();
+	bool flapsPistonValue = false;
 	bool cataSpin = false;
+	bool armPistonValue = false;
 	
 	while (true) {
 		
@@ -130,10 +131,10 @@ void opcontrol() {
 			intake_motors = 0;
 		}
 
-		int rotationPosition = rotation_sensor.get_position()
+		int rotationPosition = rotation_sensor.get_position();
 
 		if (rotationPosition != 0) {
-			rotation_sensor.set_position(0)
+			rotation_sensor.set_position(0);
 		}
 
 		//Always shoots
@@ -141,28 +142,33 @@ void opcontrol() {
 			cataSpin = !cataSpin;
     	}
 		
-		if (cata_spin = true) {
-			rotation_sensor = reset();
+		if (cataSpin = true) {
+			rotation_sensor.reset();
 			cata_motors = 127;
 		}
 
-		if (cata_spin = false); {
+		if (cataSpin = false); {
 			cata_motors = 0;
 			rotation_sensor.set_position(0);
 		}
 
 		//Shoots when pressed, then resets
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motor = 127;
+      		cata_motors = 127;
 			pros::delay(10);
-			cata_motor = 0;
+			cata_motors = 0;
     	}
 
 		//Controls Flaps
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      		pistonValue = !pistonValue;
-			pistons.set_value(pistonValue);
-			printf("something\n");
+      		flapsPistonValue = !flapsPistonValue;
+			pistons.set_value(flapsPistonValue);
+    	}
+
+		//Controls arm
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      		armPistonValue = !armPistonValue;
+			pistons.set_value(armPistonValue);
     	}
 
 		pros::delay(20);
