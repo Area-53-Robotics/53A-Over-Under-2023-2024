@@ -2,7 +2,7 @@
 #include "devices.h"
 #include "auton.h"
 
-bool starting_point = true;
+static bool starting_point = true;
 
 /**
  * A callback function for LLEMU's center button.
@@ -32,11 +32,13 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Started");
 
-	//pros::lcd::register_btn1_cb(on_center_button);
+	pros::lcd::register_btn1_cb(on_center_button);
 
-  	//imu_sensor.reset();
+  	imu_sensor.reset();
+	pros::lcd::set_text(3, "IMU Calibrated");
 
-	//pros::lcd::set_text(3, "IMU Calibrated");
+	rotation_sensor.reset();
+	pros::lcd::set_text(4, "Rotation Sensor Calibrated");
 }
 
 /**
@@ -73,20 +75,18 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	//resets sensor (hopefully)
+	//resets sensors (hopefully)
 	imu_sensor.reset();
+	rotation_sensor.reset();
 
 	if (starting_point == true) {
-		moveBot(10);
 		pros::lcd::set_text(2, "Auton from Left Starting Point");
+		autonFromLSP();
 	}
 
 	if (starting_point == false) {
 		pros::lcd::set_text(2, "Auton from Right Starting Point");
-	}
-
-	while (true) {
-		pros::delay(20);
+		autonFromLSP();
 	}
 }
 
@@ -107,9 +107,10 @@ void autonomous() {
 void opcontrol() {
 
 	rotation_sensor.reset();
-	bool flapsPistonValue = false;
-	bool cataSpin = false;
-	bool armPistonValue = false;
+	//User Control Booleans
+	static bool flapsPistonValue = false;
+	static bool cataSpin = false;
+	static bool armPistonValue = false;
 	
 	while (true) {
 		
@@ -122,41 +123,44 @@ void opcontrol() {
 
 		//Controls Intake
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      		intake_motors = 50;
+      		intake_motors = 127;
     	}
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			intake_motors = -50;
+			intake_motors = -127;
 		}
 		else {
 			intake_motors = 0;
 		}
 
-		int rotationPosition = rotation_sensor.get_position();
+		//Gets position of rotation sensor
+		//int rotationPosition = rotation_sensor.get_position();
 
+		//resets cata if it's not in launching position
+		/*
 		if (rotationPosition != 0) {
 			rotation_sensor.set_position(0);
 		}
-
-		//Always shoots
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+		*/
+		//Always shoots cata
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
     	}
 		
-		if (cataSpin = true) {
+		if ((cataSpin = true)) {
 			rotation_sensor.reset();
-			cata_motors = 127;
+			cata_motor = 127;
+			printf("something\n");
+		} 
+		else ((cataSpin = false)); {
+			cata_motor = 0;
+			//rotation_sensor.set_position(0);
 		}
 
-		if (cataSpin = false); {
-			cata_motors = 0;
-			rotation_sensor.set_position(0);
-		}
-
-		//Shoots when pressed, then resets
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motors = 127;
-			pros::delay(10);
-			cata_motors = 0;
+		//Shoots cata when pressed
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      		cata_motor = 127;
+			pros::delay(30);
+			cata_motor = 0;
     	}
 
 		//Controls Flaps

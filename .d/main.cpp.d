@@ -1,4 +1,4 @@
-bin/drivecode.cpp.o: src/drivecode.cpp include/main.h include/api.h \
+bin/main.cpp.o: src/main.cpp include/main.h include/api.h \
  include/pros/adi.h include/pros/colors.h include/pros/distance.h \
  include/pros/error.h include/pros/ext_adi.h include/pros/adi.h \
  include/pros/adi.h include/pros/gps.h include/pros/imu.h \
@@ -76,7 +76,7 @@ bin/drivecode.cpp.o: src/drivecode.cpp include/main.h include/api.h \
  include/pros/rotation.hpp include/pros/rotation.h include/pros/rtos.hpp \
  include/pros/screen.hpp include/pros/screen.h include/pros/vision.hpp \
  include/pros/vision.h include/pros/link.hpp include/pros/link.h \
- include/devices.h include/main.h include/auton.h include/vari.h
+ include/devices.h include/main.h include/auton.h
 include/main.h:
 include/api.h:
 include/pros/adi.h:
@@ -233,4 +233,3 @@ include/pros/link.h:
 include/devices.h:
 include/main.h:
 include/auton.h:
-include/vari.h:
