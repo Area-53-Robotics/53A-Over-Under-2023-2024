@@ -50,7 +50,7 @@ void turnBot (float turnDegree) {
 	}
 }
 
-void runIntake (float runmsec, bool speed) {
+void runIntake (float runmsec, int speed) {
 
 	intake_motors = speed;
 
@@ -60,11 +60,23 @@ void runIntake (float runmsec, bool speed) {
 
 }
 
-void runCata () {
+void runCata (float msecs, int speed) {
 
 	rotation_sensor.reset();
-	cata_motor = 127;
-	pros::delay(40);
+	cata_motor = speed;
+	pros::delay(msecs);
 	cata_motor = 0;
+
+}
+
+void climbArm (bool open) {
+
+	armPiston.set_value(open);
+
+}
+
+void flaps (bool value) {
+
+	flapPistons.set_value(value);
 
 }

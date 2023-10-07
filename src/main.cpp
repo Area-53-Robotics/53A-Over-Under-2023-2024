@@ -107,13 +107,17 @@ void autonomous() {
 void opcontrol() {
 
 	rotation_sensor.reset();
+	rotation_sensor.set_position(70);
+
 	//User Control Booleans
-	static bool flapsPistonValue = false;
-	static bool cataSpin = false;
-	static bool armPistonValue = false;
+	bool flapsPistonValue = false;
+	bool cataSpin = false;
+	bool armPistonValue = false;
+	bool rotate = false;
 	
 	while (true) {
 		
+		//Motors
 		//Arcade Drive
     	int left = master.get_analog(ANALOG_RIGHT_Y) + master.get_analog(ANALOG_LEFT_X);
 		int right = master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X);
@@ -132,48 +136,49 @@ void opcontrol() {
 			intake_motors = 0;
 		}
 
-		//Gets position of rotation sensor
-		//int rotationPosition = rotation_sensor.get_position();
-
-		//resets cata if it's not in launching position
-		/*
-		if (rotationPosition != 0) {
-			rotation_sensor.set_position(0);
-		}
-		*/
-		//Always shoots cata
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-			cataSpin = !cataSpin;
-    	}
-		
-		if ((cataSpin = true)) {
-			rotation_sensor.reset();
-			cata_motor = 127;
-			printf("something\n");
-		} 
-		else ((cataSpin = false)); {
-			cata_motor = 0;
-			//rotation_sensor.set_position(0);
-		}
-
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motor = 127;
-			pros::delay(30);
-			cata_motor = 0;
-    	}
-
+		//Pistons
 		//Controls Flaps
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       		flapsPistonValue = !flapsPistonValue;
-			pistons.set_value(flapsPistonValue);
+			flapPistons.set_value(flapsPistonValue);
     	}
 
 		//Controls arm
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
       		armPistonValue = !armPistonValue;
-			pistons.set_value(armPistonValue);
+			armPiston.set_value(armPistonValue);
     	}
+
+		//Catapult
+		//Gets position of rotation sensor
+		//int rotationPosition = rotation_sensor.get_position();
+		
+		//Always shoots cata
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			cataSpin = !cataSpin;
+    	}
+		
+		if (cataSpin == true) {
+			rotation_sensor.reset();
+			cata_motor = 127;
+		}
+		
+		if (cataSpin == false) {
+			rotate = !rotate;
+		} 
+
+		//Shoots cata when pressed
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      		cata_motor = 127;
+			pros::delay(100);
+			cata_motor = 0;
+    	}
+
+		if (rotate == true) {
+			rotation_sensor.set_position(70);
+			cata_motor = 0;
+			rotate = !rotate;
+		}
 
 		pros::delay(20);
 	}

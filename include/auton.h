@@ -2,12 +2,19 @@
 
 //mainAuton.cpp
 //Moving/Turning the bot
+#include <type_traits>
 void moveBot (float distancein);
 void turnBot (float turnDegree);
 
+//Intake
+void runIntake (float runmsec, int speed);
 
-void runIntake (float runmsec, bool speed);
-void runCata ();
+//Catapult
+void runCata (float msec, int speed);
+
+//Pistons
+void climbArm (bool open);
+void flaps (bool value);
 
 //leftAuton.cpp
 void autonFromLSP ();
