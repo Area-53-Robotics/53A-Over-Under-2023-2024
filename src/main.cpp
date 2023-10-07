@@ -114,6 +114,8 @@ void opcontrol() {
 	bool cataSpin = false;
 	bool armPistonValue = false;
 	bool rotate = false;
+	int counter = 1;
+	int pastCounter = 0;
 	
 	while (true) {
 		
@@ -156,6 +158,7 @@ void opcontrol() {
 		//Always shoots cata
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
+			counter = counter++;
     	}
 		
 		if (cataSpin == true) {
@@ -175,9 +178,12 @@ void opcontrol() {
     	}
 
 		if (rotate == true) {
-			rotation_sensor.set_position(70);
-			cata_motor = 0;
-			rotate = !rotate;
+			if (counter > pastCounter) {
+				pastCounter = counter;
+				rotation_sensor.set_position(70);
+				cata_motor = 0;
+				rotate = !rotate;
+			}
 		}
 
 		pros::delay(20);
