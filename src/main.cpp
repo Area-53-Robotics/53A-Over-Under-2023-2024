@@ -106,14 +106,17 @@ void autonomous() {
 
 void opcontrol() {
 
-	rotation_sensor.reset();
-	rotation_sensor.set_position(70);
+	int something = rotation_sensor.get_position();
+	printf("%i\n", something);
 
 	//User Control Booleans
 	bool flapsPistonValue = false;
 	bool cataSpin = false;
 	bool armPistonValue = false;
 	bool rotate = false;
+	bool shooting = false;
+
+	//Counter for cata
 	int counter = 1;
 	int pastCounter = 0;
 	
@@ -153,16 +156,28 @@ void opcontrol() {
 
 		//Catapult
 		//Gets position of rotation sensor
-		//int rotationPosition = rotation_sensor.get_position();
+		int rotationPosition = rotation_sensor.get_position();
+
+		/*
+		if (rotationPosition != 0 and cataSpin == false and shooting == false) {
+			int target = 0;
+			float rotationError = target - rotationPosition;
+			float previousRotationError = rotationError;
+			float rotationDerivative = rotationError - previousRotationError;
+			float rkP = 0.5;
+			float rkD = 0.5;
+			float rotationPower = rotationError*rkP + rotationDerivative*rkD;
+			cata_motor = rotationPower;
+		}
+		*/
 		
 		//Always shoots cata
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
-			counter = counter++;
+			counter = counter + 1;
     	}
 		
 		if (cataSpin == true) {
-			rotation_sensor.reset();
 			cata_motor = 127;
 		}
 		
@@ -170,21 +185,23 @@ void opcontrol() {
 			rotate = !rotate;
 		} 
 
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motor = 127;
-			pros::delay(100);
-			cata_motor = 0;
-    	}
-
 		if (rotate == true) {
 			if (counter > pastCounter) {
 				pastCounter = counter;
-				rotation_sensor.set_position(70);
 				cata_motor = 0;
 				rotate = !rotate;
 			}
 		}
+
+		//Shoots cata when pressed
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			cataSpin = false;
+			shooting = true;
+      		cata_motor = 127;
+			pros::delay(100);
+			cata_motor = 0;
+			shooting = false;
+    	}
 
 		pros::delay(20);
 	}

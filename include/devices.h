@@ -12,7 +12,7 @@ inline pros::Motor cata_motor (-13);
 
 //Sensors
 inline pros::Imu imu_sensor(4);
-inline pros::Rotation rotation_sensor(14);
+inline pros::Rotation rotation_sensor(16);
 
 //Pneumatics
 inline pros::ADIDigitalOut flapPistons ('B');
