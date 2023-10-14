@@ -11,6 +11,7 @@ static bool starting_point = true;
  * "I was pressed!" and nothing.
  */
 void on_center_button() {
+
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
@@ -20,6 +21,7 @@ void on_center_button() {
 		pros::lcd::set_text(1, "Right Starting Point");
 		starting_point = false;
 	}
+
 }
 
 /**
@@ -29,6 +31,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Started");
 
@@ -39,6 +42,7 @@ void initialize() {
 
 	rotation_sensor.reset();
 	pros::lcd::set_text(4, "Rotation Sensor Calibrated");
+
 }
 
 /**
@@ -106,13 +110,10 @@ void autonomous() {
 
 void opcontrol() {
 
-	int something = rotation_sensor.get_position();
-
 	//User Control Booleans
 	bool flapsPistonValue = false;
 	bool cataSpin = false;
 	bool armPistonValue = false;
-	bool rotate = false;
 	bool shooting = false;
 
 	//Counter for cata
@@ -130,10 +131,10 @@ void opcontrol() {
 		right_motors = right;
 
 		//Controls Intake
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       		intake_motors = 127;
     	}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
 			intake_motors = -127;
 		}
 		else {
@@ -157,18 +158,16 @@ void opcontrol() {
 		//Gets position of rotation sensor
 		int rotationPosition = rotation_sensor.get_position();
 
-		/*
 		if (rotationPosition > 0 and cataSpin == false and shooting == false) {
 			int target = 0;
 			float rotationError = target - rotationPosition;
 			float previousRotationError = rotationError;
 			float rotationDerivative = rotationError - previousRotationError;
-			float rkP = 0.5;
-			float rkD = 0.5;
-			float rotationPower = rotationError*rkP + rotationDerivative*rkD;
+			float urkP = 0.5;
+			float urkD = 0.5;
+			float rotationPower = rotationError*urkP + rotationDerivative*urkD;
 			cata_motor = rotationPower;
 		}
-		*/
 		
 		//Always shoots cata
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
@@ -181,16 +180,11 @@ void opcontrol() {
 		}
 		
 		if (cataSpin == false) {
-			rotate = !rotate;
-		} 
-
-		if (rotate == true) {
 			if (counter > pastCounter) {
 				pastCounter = counter;
 				cata_motor = 0;
-				rotate = !rotate;
 			}
-		}
+		} 
 
 		//Shoots cata when pressed
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {

@@ -57,14 +57,14 @@ void runIntake (float runmsec, int speed) {
 }
 
 void runCata (float msecs, int speed) {
-	
+
 	cata_motor = speed;
 	pros::delay(msecs);
 	cata_motor = 0;
 
 }
 
-void rotationReset (float time) {
+void cataRotationReset (float time) {
 	int rotationPosition = rotation_sensor.get_position();
     int target = 0;
 

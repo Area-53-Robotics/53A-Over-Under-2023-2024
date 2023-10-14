@@ -1,8 +1,8 @@
 #pragma once
-
+#include <type_traits>
 //mainAuton.cpp
 //Moving/Turning the bot
-#include <type_traits>
+
 void moveBot (float distancein);
 void turnBot (float turnDegree);
 
@@ -11,7 +11,7 @@ void runIntake (float runmsec, int speed);
 
 //Catapult
 void runCata (float msec, int speed);
-void rotationReset (float time);
+void cataRotationReset (float time);
 
 //Pistons
 void climbArm (bool open);
@@ -21,7 +21,7 @@ void flaps (bool value);
 void autonFromLSP ();
 
 //rightAuton.cpp
-void autonFromLSP ();
+void autonFromRSP ();
 
 //skillsAuton.cpp
 void skillsAuton();

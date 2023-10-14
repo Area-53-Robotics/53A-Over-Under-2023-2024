@@ -4,7 +4,7 @@
 
 void autonFromLSP () {
 
-    rotationReset(1000);
+    cataRotationReset(1000);
     moveBot(1);
     turnBot(-90);
     moveBot(12);
@@ -14,7 +14,7 @@ void autonFromLSP () {
     moveBot(-3);
     turnBot(180);
     runCata(1000, 127);
-    rotationReset(1000);
+    cataRotationReset(1000);
     turnBot(135);
     moveBot(5);
     turnBot(-90);
