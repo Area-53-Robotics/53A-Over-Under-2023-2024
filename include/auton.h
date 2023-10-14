@@ -11,6 +11,7 @@ void runIntake (float runmsec, int speed);
 
 //Catapult
 void runCata (float msec, int speed);
+void rotationReset (float time);
 
 //Pistons
 void climbArm (bool open);

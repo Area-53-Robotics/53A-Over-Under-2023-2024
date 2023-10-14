@@ -75,7 +75,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	//resets sensors (hopefully)
+	//resets sensors
 	imu_sensor.reset();
 	rotation_sensor.reset();
 
@@ -107,7 +107,6 @@ void autonomous() {
 void opcontrol() {
 
 	int something = rotation_sensor.get_position();
-	printf("%i\n", something);
 
 	//User Control Booleans
 	bool flapsPistonValue = false;
@@ -159,7 +158,7 @@ void opcontrol() {
 		int rotationPosition = rotation_sensor.get_position();
 
 		/*
-		if (rotationPosition != 0 and cataSpin == false and shooting == false) {
+		if (rotationPosition > 0 and cataSpin == false and shooting == false) {
 			int target = 0;
 			float rotationError = target - rotationPosition;
 			float previousRotationError = rotationError;

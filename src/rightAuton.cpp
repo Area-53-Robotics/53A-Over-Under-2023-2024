@@ -4,8 +4,6 @@
 
 void autonFromRSP () {
 
-    while (true) {
-
         moveBot(72);
         turnBot(-90);
         moveBot(1);
@@ -25,7 +23,5 @@ void autonFromRSP () {
         moveBot(24);
         turnBot(180);
         climbArm(true);
-
-    }
 
 }

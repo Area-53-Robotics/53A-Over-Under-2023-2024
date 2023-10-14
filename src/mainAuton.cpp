@@ -11,8 +11,6 @@ void moveBot (float distancein) {
 	float movePower = 100;
 
 	while (movePower > 0) {
-		
-		imu_sensor.reset();
 
 		float getRotation = imu_sensor.get_heading();
 
@@ -35,8 +33,6 @@ void turnBot (float turnDegree) {
 	float turnPower = 100;
 
 	while (turnPower > 0) {
-
-		imu_sensor.reset();
 
 		float getSensorData = imu_sensor.get_rotation();
 
@@ -61,12 +57,26 @@ void runIntake (float runmsec, int speed) {
 }
 
 void runCata (float msecs, int speed) {
-
-	rotation_sensor.reset();
+	
 	cata_motor = speed;
 	pros::delay(msecs);
 	cata_motor = 0;
 
+}
+
+void rotationReset (float time) {
+	int rotationPosition = rotation_sensor.get_position();
+    int target = 0;
+
+	while (rotationPosition > 0) {
+		float rotationError = target - rotationPosition;
+		float previousRotationError = rotationError;
+		float rotationDerivative = rotationError - previousRotationError;
+		float rkP = 0.5;
+		float rkD = 0.5;
+		float rotationPower = rotationError*rkP + rotationDerivative*rkD;
+        cata_motor = rotationPower;
+	}
 }
 
 void climbArm (bool open) {
