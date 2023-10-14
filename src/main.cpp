@@ -86,7 +86,7 @@ void autonomous() {
 
 	if (starting_point == false) {
 		pros::lcd::set_text(2, "Auton from Right Starting Point");
-		autonFromLSP();
+		autonFromRSP();
 	}
 }
 

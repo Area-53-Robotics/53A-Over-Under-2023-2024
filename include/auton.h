@@ -22,3 +22,6 @@ void autonFromLSP ();
 
 //rightAuton.cpp
 void autonFromLSP ();
+
+//skillsAuton.cpp
+void skillsAuton();
