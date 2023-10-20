@@ -115,10 +115,17 @@ void opcontrol() {
 	bool cataSpin = false;
 	bool armPistonValue = false;
 	bool shooting = false;
+	bool cataSpinOnce = false;
 
-	//Counter for cata
-	int counter = 1;
-	int pastCounter = 0;
+	//Catapult classes
+	enum class CatapultState {
+			Loading,
+			Ready,
+			FireOnce,
+			ConstantFire,
+		};
+		
+		CatapultState state = CatapultState::Loading;
 	
 	while (true) {
 		
@@ -131,10 +138,10 @@ void opcontrol() {
 		right_motors = right;
 
 		//Controls Intake
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
       		intake_motors = 127;
     	}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
 			intake_motors = -127;
 		}
 		else {
@@ -158,43 +165,47 @@ void opcontrol() {
 		//Gets position of rotation sensor
 		int rotationPosition = rotation_sensor.get_position();
 
-		if (rotationPosition > 0 and cataSpin == false and shooting == false) {
-			int target = 0;
-			float rotationError = target - rotationPosition;
-			float previousRotationError = rotationError;
-			float rotationDerivative = rotationError - previousRotationError;
-			float urkP = 0.5;
-			float urkD = 0.5;
-			float rotationPower = rotationError*urkP + rotationDerivative*urkD;
-			cata_motor = rotationPower;
+		if (state == CatapultState::Loading) {
+			// load the catapult
+			cata_motor = 50;
+		} else if (state == CatapultState::Ready) {
+			cata_motor = 0;
+		} else if (state == CatapultState::FireOnce) {
+			cata_motor = 127;
+			pros::delay(100);
+			cata_motor = 0;
+		} else if (state == CatapultState::ConstantFire) {
+			cata_motor = 127;
 		}
+		
+		//printf("%i\n",rotationPosition);
+		//printf("%i\n", state);
 		
 		//Always shoots cata
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
-			counter = counter + 1;
     	}
-		
-		if (cataSpin == true) {
-			cata_motor = 127;
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			cataSpinOnce = !cataSpinOnce;
+			pros::delay(100);
+			cataSpinOnce = false;
 		}
 		
-		if (cataSpin == false) {
-			if (counter > pastCounter) {
-				pastCounter = counter;
-				cata_motor = 0;
-			}
-		} 
+		printf("%i\n", cataSpin);
 
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			cataSpin = false;
-			shooting = true;
-      		cata_motor = 127;
+		if (cataSpin == true) {
+			state = CatapultState::ConstantFire;
+		} else if (rotationPosition > 0 and rotationPosition < 35000) {
+			state = CatapultState::Loading;
+		} else if (cataSpinOnce == true) {
+			//shoots cata when pressed
+			state = CatapultState::FireOnce;
 			pros::delay(100);
-			cata_motor = 0;
-			shooting = false;
-    	}
+			state = CatapultState::Ready;
+		} else {
+			state = CatapultState::Ready;
+		}
 
 		pros::delay(20);
 	}
