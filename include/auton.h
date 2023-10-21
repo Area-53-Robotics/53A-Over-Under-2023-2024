@@ -1,8 +1,8 @@
 #pragma once
 #include <type_traits>
+
 //mainAuton.cpp
 //Moving/Turning the bot
-
 void moveBot (float distancein);
 void turnBot (float turnDegree);
 
