@@ -12,7 +12,7 @@ void moveBot (float distancein) {
 
 	while (movePower > 0) {
 
-		float getRotation = imu_sensor.get_heading();
+		float getRotation = left_motors.get_position();
 
 		float pi = M_PI;
 		float circumference = pi*2*2;

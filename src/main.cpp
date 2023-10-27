@@ -1,6 +1,7 @@
 #include "main.h"
 #include "devices.h"
 #include "auton.h"
+#include "cata.h"
 
 static bool starting_point = true;
 
@@ -113,14 +114,23 @@ void opcontrol() {
 	//User Control Booleans
 	bool flapsPistonValue = false;
 	bool armPistonValue = false;
+	bool rotate = false;
+	bool shooting = false;
+	bool cataSpin = false;
+
+	//cata variables
+	int counter = 1;
+	int pastCounter = 0;
+	int cataResetCounter = 0;
+	int prevCRC = 0;
 	
 	while (true) {
 		
 		//Motors
 		//Arcade Drive
-    	int left = master.get_analog(ANALOG_RIGHT_Y) + master.get_analog(ANALOG_LEFT_X);
-		int right = master.get_analog(ANALOG_RIGHT_Y) - master.get_analog(ANALOG_LEFT_X);
-
+    	int left = master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
+		int right = master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
+		
 		left_motors = left;
 		right_motors = right;
 
@@ -148,90 +158,35 @@ void opcontrol() {
 			armPiston.set_value(armPistonValue);
     	}
 
+		//Cata code
+		cata();
+
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
-			counter = counter++;
-			counter = counter + 1;
     	}
+
+		//Shoots cata when pressed
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			shortFire = true;
+    	}
+		else {
+			shortFire = false;
+		}
 
 		if (cataSpin == true) {
-			rotation_sensor.reset();
-			cata_motor = 127;
+			state == CatapultState::ConstantFire;
+		} else if (shortFire == true) {
+			state == CatapultState::ShortFire;
+		}
+		else {
+			state = CatapultState::Resetting;
 		}
 
-		if (cataSpin == false) {
-			rotate = !rotate;
-		} 
+		printf("%i\n", getRotation);
+		
+		//Printing out the temperature of Motors
 
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motor = 127;
-			pros::delay(100);
-			cata_motor = 0;
-    	}
-
-		if (rotate == true) {
-			if (counter > pastCounter) {
-				pastCounter = counter;
-				rotation_sensor.set_position(70);
-				cata_motor = 0;
-				rotate = !rotate;
-			}
-		}
-
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			cataSpin = false;
-			shooting = true;
-      		cata_motor = 127;
-			pros::delay(100);
-			cata_motor = 0;
-			shooting = false;
-    	}
-		//Last Resort Scrimmage Cata
-		/*
-		//Always shoots cata
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-			cataSpin = !cataSpin;
-			counter = counter++;
-			counter = counter + 1;
-    	}
-
-		if (cataSpin == true) {
-			rotation_sensor.reset();
-			cata_motor = 127;
-		}
-
-		if (cataSpin == false) {
-			rotate = !rotate;
-		} 
-
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      		cata_motor = 127;
-			pros::delay(100);
-			cata_motor = 0;
-    	}
-
-		if (rotate == true) {
-			if (counter > pastCounter) {
-				pastCounter = counter;
-				rotation_sensor.set_position(70);
-				cata_motor = 0;
-				rotate = !rotate;
-			}
-		}
-
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			cataSpin = false;
-			shooting = true;
-      		cata_motor = 127;
-			pros::delay(100);
-			cata_motor = 0;
-			shooting = false;
-    	}
-		*/
+		
 		pros::delay(20);
 	}
 

@@ -5,7 +5,6 @@
 void autonFromRSP () {
 
     moveBot(72);
-    
     turnBot(-90);
     moveBot(1);
     runIntake(500, 127);

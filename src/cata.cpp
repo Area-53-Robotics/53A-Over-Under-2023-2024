@@ -2,85 +2,109 @@
 #include "devices.h"
 #include "cata.h"
 
-bool cataSpin = false;
-bool cataSpinOnce = false;
+enum class CatapultState {
+	Resetting,
+    Ready,
+	ShortFire,
+    ConstantFire,
+};
 
-void cataReset () {
+CatapultState state = CatapultState::Resetting;
 
-    enum class CatapultState {
-	        Loading,
-	        Ready,
-	        FireOnce,
-	        ConstantFire,
-        };
-		
-        CatapultState state = CatapultState::Loading;
-
-        //Catapult
-        //Gets position of rotation sensor
-        int rotationPosition = rotation_sensor.get_position();
-    
-    if (rotationPosition > 0 and rotationPosition < 35000) {
-	        state = CatapultState::Loading;
-}
 void cata () {
-    while (true) {
-        //Catapult classes
-        enum class CatapultState {
-	        Loading,
-	        Ready,
-	        FireOnce,
-	        ConstantFire,
-        };
-		
-        CatapultState state = CatapultState::Loading;
 
-        //Catapult
+    bool cataReady = false;
+    
+    if (state == CatapultState::Resetting) {
         //Gets position of rotation sensor
         int rotationPosition = rotation_sensor.get_position();
 
-        if (state == CatapultState::Loading) {
-	        // load the catapult
+        if (rotationPosition > 0 and rotationPosition < 35000) {
 	        cata_motor = 50;
-        } else if (state == CatapultState::Ready) {
-	        cata_motor = 0;
-        } else if (state == CatapultState::FireOnce) {
-	        cata_motor = 127;
-	        pros::delay(100);
-	        cata_motor = 0;
-        } else if (state == CatapultState::ConstantFire) {
-	        cata_motor = 127;
+            cataReady = false;
         }
-		
-        //printf("%i\n",rotationPosition);
-        //printf("%i\n", state);
-		
-        //Always shoots cata
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-	       cataSpin = !cataSpin;
+        else {
+            state = CatapultState::Ready;
+            cataReady = true;
         }
+	} else if (state == CatapultState::Ready) {
+		cata_motor = 0;
+	} else if (state == CatapultState::ShortFire) {
+		if (cataReady == true) {
+		    cata_motor = 127;
+			pros::delay(20);
+			cataReady = false;
+		} else if (cataReady == false) {
+			state = CatapultState::Resetting;
+		}
+	} else if (state == CatapultState::ConstantFire) {
+		cata_motor = 127;
+	}
 
-        if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-	        cataSpin = false;
-	        cataSpinOnce = !cataSpinOnce;
-	        pros::delay(100);
-	        cataSpinOnce = false;
-        }
-	
-        printf("%i\n", cataSpin);
-
-        if (cataSpin == true) {
-	        state = CatapultState::ConstantFire;
-        } else if (rotationPosition > 0 and rotationPosition < 35000) {
-	        state = CatapultState::Loading;
-        } else if (cataSpinOnce == true) {
-	        //shoots cata when pressed
-	        state = CatapultState::FireOnce;
-	        pros::delay(100);
-	        state = CatapultState::Ready;
-        } else {
-	        state = CatapultState::Ready;
-        }       
-    }
 }
 
+//Example from 53E
+
+/*
+#include "main.h"
+#include "devices.h"
+#include "cata.h"
+
+void Catapult::fire() {
+  if (get_state() == CatapultState::Ready) {
+    printf("firing\n");
+    set_state(CatapultState::Firing);
+  }
+}
+
+void Catapult::toggle_repeating() {
+  if (!(get_state() == CatapultState::Repeating)) {
+    set_state(CatapultState::Repeating);
+  } else {
+    set_state(CatapultState::Loading);
+  }
+}
+
+void Catapult::loop() {
+  switch (get_state()) {
+    case CatapultState::Idle: {
+      // This mode is meant to to completely disable the catapult
+      motor->move(0);
+      break;
+    }
+
+    case CatapultState::Loading: {
+      if (limit_switch->get_value()) {
+        set_state(CatapultState::Ready);
+      }
+
+      motor->move(100);
+      break;
+    }
+
+    case CatapultState::Ready: {
+      if (!limit_switch->get_value()) {
+        set_state(CatapultState::Loading);
+      }
+
+      motor->move(0);
+      break;
+    }
+
+    case CatapultState::Firing: {
+      printf("Firing\n");
+      while (limit_switch->get_value()) {
+        motor->move(127);
+      }
+      set_state(CatapultState::Loading);
+      break;
+    }
+
+    case CatapultState::Repeating: {
+      // motor->move(127);
+      break;
+    }
+  }
+  pros::delay(20);
+
+*/
