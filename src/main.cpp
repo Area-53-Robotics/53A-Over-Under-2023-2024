@@ -1,7 +1,8 @@
 #include "main.h"
-#include "devices.h"
 #include "auton.h"
 #include "cata.h"
+#include "devices.h"
+#include <cstdio>
 #include <functional>
 
 static bool starting_point = true;
@@ -13,17 +14,15 @@ static bool starting_point = true;
  * "I was pressed!" and nothing.
  */
 void on_center_button() {
-
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(1, "Left Starting Point");
-		starting_point = true;
-	} else {
-		pros::lcd::set_text(1, "Right Starting Point");
-		starting_point = false;
-	}
-
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+    pros::lcd::set_text(1, "Left Starting Point");
+    starting_point = true;
+  } else {
+    pros::lcd::set_text(1, "Right Starting Point");
+    starting_point = false;
+  }
 }
 
 /**
@@ -33,18 +32,13 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  pros::lcd::initialize();
+  pros::lcd::set_text(1, "Started");
 
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Started");
+  pros::lcd::register_btn1_cb(on_center_button);
 
-	pros::lcd::register_btn1_cb(on_center_button);
-
-  	imu_sensor.reset();
-	pros::lcd::set_text(3, "IMU Calibrated");
-
-	rotation_sensor.reset();
-	pros::lcd::set_text(4, "Rotation Sensor Calibrated");
-
+  imu_sensor.reset();
+  pros::lcd::set_text(3, "IMU Calibrated");
 }
 
 /**
@@ -52,9 +46,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-
-}
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -65,9 +57,7 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-
-}
+void competition_initialize() {}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -82,15 +72,15 @@ void competition_initialize() {
  */
 void autonomous() {
 
-	if (starting_point == true) {
-		pros::lcd::set_text(2, "Auton from Left Starting Point");
-		autonFromLSP();
-	}
+  if (starting_point == true) {
+    pros::lcd::set_text(2, "Auton from Left Starting Point");
+    autonFromLSP();
+  }
 
-	if (starting_point == false) {
-		pros::lcd::set_text(2, "Auton from Right Starting Point");
-		autonFromRSP();
-	}
+  if (starting_point == false) {
+    pros::lcd::set_text(2, "Auton from Right Starting Point");
+    autonFromRSP();
+  }
 }
 
 /**
@@ -107,135 +97,122 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
+// Angles are in centidegrees
+const float MIN_CATA_READY_ANGLE = 32000;
+const float MAX_CATA_READY_ANGLE = 30000;
+
+bool isCataReady(float cataPosition) {
+  if (cataPosition > MIN_CATA_READY_ANGLE or
+      cataPosition < MAX_CATA_READY_ANGLE) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 void opcontrol() {
+  cata_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-	//User Control Booleans
-	bool flapsPistonValue = false;
-	bool armPistonValue = false;
-	bool cataSpin = false;
-	bool instantFire = false;
-	bool cataReady = false;
+  // User Control State Variables
+  bool flapsPistonValue = false;
+  bool armPistonValue = false;
 
-	float cP = 0.5;
-	float cD = 0.5;
+  enum class CatapultState {
+    Resetting,
+    Ready,
+    SingleFire,
+    ConstantFire,
+  };
 
-	//cata state definitions
-		enum class CatapultState {
-			Resetting,
-    		Ready,
-			ShortFire,
-    		ConstantFire,
-		};
+  CatapultState catapultState = CatapultState::Resetting;
 
-		CatapultState state = CatapultState::Resetting;
-	
-	while (true) {
-		
-		//Motors
-		//Arcade Drive
-    	int left = master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
-		int right = master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
-		
-		left_motors = left;
-		right_motors = right;
+  // FIXME: use these
+  float cP = 0.5;
+  float cD = 0.5;
 
-		//Controls Intake
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      		intake_motors = 127;
-    	}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			intake_motors = -127;
-		}
-		else {
-			intake_motors = 0;
-		}
+  while (true) {
+    // Drivetrain
+    // Arcade Drive
+    int left =
+        master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
+    int right =
+        master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
 
-		//Pistons
-		//Controls Flaps
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      		flapsPistonValue = !flapsPistonValue;
-			flapPistons.set_value(flapsPistonValue);
-    	}
+    left_motors = left;
+    right_motors = right;
 
-		//Controls arm
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
-      		armPistonValue = !armPistonValue;
-			armPiston.set_value(armPistonValue);
-    	}
-
-        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-			cataSpin = !cataSpin;
-    	}
-
-		//Shoots cata when pressed
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			instantFire = true;
-    	} else {
-			instantFire = false;
-		}
-
-		if (cataSpin == true) {
-			state == CatapultState::ConstantFire;
-			printf("%i\n", state);
-			printf("shoot\n");
-		} else if (instantFire == true) {
-			state == CatapultState::ShortFire;
-			printf("%i\n", state);
-		} else {
-			state = CatapultState::Resetting;
-			printf("%i\n", state);
-		}
-
-		if (state == CatapultState::ConstantFire) {
-			cata_motor = 100;
-			printf("constant fire");
-		} else if (state == CatapultState::ShortFire) {
-			if (cataReady == true) {
-		    	cata_motor = 127;
-				pros::delay(20);
-				cataReady = false;
-				printf("fired");
-			} else if (cataReady == false) {
-				state = CatapultState::Resetting;
-			}
-		} else if (state == CatapultState::Resetting) {
-        
-			//Gets position of rotation sensor
-        	int rotationPosition = rotation_sensor.get_position();
-
-			pros::delay(20);
-
-			//printf("%i\n", rotationPosition);
-		
-			if (rotationPosition > 0 and rotationPosition < 35000) {
-	        	
-				float cataError = 35500 - rotationPosition;
-				float prevCataError = cataError;
-				float cataDerivative = cataError - prevCataError;
-				float cataPower = cataError*cP + cataDerivative*cD;
-
-				cata_motor = cataPower;
-            	cataReady = false;
-        	}
-        	else {
-            	state = CatapultState::Ready;
-            	cataReady = true;
-        	}
-		} else if (state == CatapultState::Ready) {
-			cata_motor = 0;
-		} 
-		
+    // Controls Intake
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      intake_motors = 127;
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intake_motors = -127;
+    } else {
+      intake_motors = 0;
     }
 
-	//Printing out the temperature of Motors
+    // Pistons
+    // Controls Flaps
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      flapsPistonValue = !flapsPistonValue;
+      flapPistons.set_value(flapsPistonValue);
+    }
 
-	std::vector<double> temperatures = left_motors.get_temperatures();
-	std::vector<double> temperatures2 = right_motors.get_temperatures();
+    // Controls arm
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      armPistonValue = !armPistonValue;
+      armPiston.set_value(armPistonValue);
+    }
 
-	master.print(0, 0, "Temperature %f", temperatures);
-	master.print(1, 0, "Temperature %f", temperatures2);
+    // Toggle repeatedly firing the catapult
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      if (catapultState == CatapultState::ConstantFire) {
+        catapultState = CatapultState::Resetting;
+      } else {
+        catapultState = CatapultState::ConstantFire;
+      }
+    }
 
-	pros::delay(50);
+    // Shoots catapult when pressed
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      if (catapultState == CatapultState::Ready) {
+        catapultState = CatapultState::SingleFire;
+      }
+    }
 
+    float catapultPosition = catapult_rotation_sensor.get_angle();
+
+    switch (catapultState) {
+    case CatapultState::Resetting:
+      cata_motor.move(127);
+      if (isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Ready;
+      }
+      break;
+    case CatapultState::Ready:
+      if (!isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Resetting;
+      }
+      cata_motor.brake();
+      break;
+    case CatapultState::SingleFire:
+      cata_motor.move(127);
+      if (!isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Resetting;
+      }
+      break;
+    case CatapultState::ConstantFire:
+      cata_motor.move(127);
+      break;
+    }
+
+    // Print out the temperature of Motors
+    std::vector<double> temperatures = left_motors.get_temperatures();
+    std::vector<double> temperatures2 = right_motors.get_temperatures();
+
+    master.print(0, 0, "Temperature %f", temperatures);
+    master.print(1, 0, "Temperature %f", temperatures2);
+
+    pros::delay(50); // FIXME: change back to 20
+  }
 }
-	
+
