@@ -3,8 +3,8 @@
 #include "auton.h"
 #include <cmath>
 
-float kP = 0.5;
-float kD = 0.5;
+float kP = 0.27;
+float kD = 0.35;
 
 void moveBot (float distancein) {
 
@@ -12,7 +12,7 @@ void moveBot (float distancein) {
 
 	while (movePower > 0) {
 
-		float getRotation = left_motors.get_position();
+		double getRotation = left_motors.get_positions()[0];
 
 		float pi = M_PI;
 		float circumference = pi*2*2;

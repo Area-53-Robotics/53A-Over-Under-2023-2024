@@ -2,6 +2,7 @@
 #include "devices.h"
 #include "auton.h"
 #include "cata.h"
+#include <functional>
 
 static bool starting_point = true;
 
@@ -80,9 +81,6 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	//resets sensors
-	imu_sensor.reset();
-	rotation_sensor.reset();
 
 	if (starting_point == true) {
 		pros::lcd::set_text(2, "Auton from Left Starting Point");
@@ -114,15 +112,22 @@ void opcontrol() {
 	//User Control Booleans
 	bool flapsPistonValue = false;
 	bool armPistonValue = false;
-	bool rotate = false;
-	bool shooting = false;
 	bool cataSpin = false;
+	bool instantFire = false;
+	bool cataReady = false;
 
-	//cata variables
-	int counter = 1;
-	int pastCounter = 0;
-	int cataResetCounter = 0;
-	int prevCRC = 0;
+	float cP = 0.5;
+	float cD = 0.5;
+
+	//cata state definitions
+		enum class CatapultState {
+			Resetting,
+    		Ready,
+			ShortFire,
+    		ConstantFire,
+		};
+
+		CatapultState state = CatapultState::Resetting;
 	
 	while (true) {
 		
@@ -158,36 +163,79 @@ void opcontrol() {
 			armPiston.set_value(armPistonValue);
     	}
 
-		//Cata code
-		cata();
-
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			cataSpin = !cataSpin;
     	}
 
 		//Shoots cata when pressed
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			shortFire = true;
-    	}
-		else {
-			shortFire = false;
+			instantFire = true;
+    	} else {
+			instantFire = false;
 		}
 
 		if (cataSpin == true) {
 			state == CatapultState::ConstantFire;
-		} else if (shortFire == true) {
+			printf("%i\n", state);
+			printf("shoot\n");
+		} else if (instantFire == true) {
 			state == CatapultState::ShortFire;
-		}
-		else {
+			printf("%i\n", state);
+		} else {
 			state = CatapultState::Resetting;
+			printf("%i\n", state);
 		}
 
-		printf("%i\n", getRotation);
-		
-		//Printing out the temperature of Motors
+		if (state == CatapultState::ConstantFire) {
+			cata_motor = 100;
+			printf("constant fire");
+		} else if (state == CatapultState::ShortFire) {
+			if (cataReady == true) {
+		    	cata_motor = 127;
+				pros::delay(20);
+				cataReady = false;
+				printf("fired");
+			} else if (cataReady == false) {
+				state = CatapultState::Resetting;
+			}
+		} else if (state == CatapultState::Resetting) {
+        
+			//Gets position of rotation sensor
+        	int rotationPosition = rotation_sensor.get_position();
 
+			pros::delay(20);
+
+			//printf("%i\n", rotationPosition);
 		
-		pros::delay(20);
-	}
+			if (rotationPosition > 0 and rotationPosition < 35000) {
+	        	
+				float cataError = 35500 - rotationPosition;
+				float prevCataError = cataError;
+				float cataDerivative = cataError - prevCataError;
+				float cataPower = cataError*cP + cataDerivative*cD;
+
+				cata_motor = cataPower;
+            	cataReady = false;
+        	}
+        	else {
+            	state = CatapultState::Ready;
+            	cataReady = true;
+        	}
+		} else if (state == CatapultState::Ready) {
+			cata_motor = 0;
+		} 
+		
+    }
+
+	//Printing out the temperature of Motors
+
+	std::vector<double> temperatures = left_motors.get_temperatures();
+	std::vector<double> temperatures2 = right_motors.get_temperatures();
+
+	master.print(0, 0, "Temperature %f", temperatures);
+	master.print(1, 0, "Temperature %f", temperatures2);
+
+	pros::delay(50);
 
 }
+	

@@ -2,6 +2,7 @@
 #include "devices.h"
 #include "cata.h"
 
+/*
 enum class CatapultState {
 	Resetting,
     Ready,
@@ -11,7 +12,7 @@ enum class CatapultState {
 
 CatapultState state = CatapultState::Resetting;
 
-void cata () {
+void cataDefine() {
 
     bool cataReady = false;
     
@@ -42,3 +43,33 @@ void cata () {
 	}
 
 }
+    
+
+void cata () {
+
+    while (true) {
+        if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			cataSpin = !cataSpin;
+    	}
+
+		//Shoots cata when pressed
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			shortFire = true;
+    	}
+		else {
+			shortFire = false;
+		}
+
+		if (cataSpin == true) {
+			state == CatapultState::ConstantFire;
+		} else if (shortFire == true) {
+			state == CatapultState::ShortFire;
+		}
+		else {
+			state = CatapultState::Resetting;
+		}
+
+    }
+
+}
+*/
