@@ -3,90 +3,183 @@
 #include "auton.h"
 #include <cmath>
 
-float kP = 0.27;
-float kD = 0.35;
+void moveBot (float targetDistance, int timeout, int maxPower) {
+	left_motors.tare_position();
 
-void moveBot (float distancein) {
+	int movePower;
+	const float kP = 1;
+	const float kD = 0.5;
+	int time_at_target = 0;
+	int delay_time = 20;
+	int start_time = pros::millis();
+	int end_time = start_time + 1000 * timeout;
 
-	float movePower = 100;
+	float previousMoveError;
 
-	while (movePower > 0) {
+	while (true) {
 
 		double getRotation = left_motors.get_positions()[0];
 
-		float pi = M_PI;
-		float circumference = pi*2*2;
+		float radius = 2;
+		float circumference = M_PI*radius*2;
 		float position = (getRotation/360)*circumference;
 
-		float moveError = distancein - position;
-		float previousMoveError = moveError;
+		float moveError = targetDistance - position;
+		printf("%f\n", moveError);
 		float moveDerivative = moveError - previousMoveError;
-		movePower = moveError*kP + moveDerivative*kD;
+		float previousMoveError = moveError;
+		movePower = (moveError*kP) + (moveDerivative*kD);
 
+    	if (movePower > maxPower) {
+      		movePower = maxPower;
+    	}
+    
 		right_motors = movePower;
 		left_motors  = movePower;
+
+		if (moveError < 0.5 and moveError > -0.5) {
+      		time_at_target += delay_time;
+      		if (time_at_target > 500) {  // 500 Milliseconds
+        		printf("move_pid met the target\n");
+        		break;
+      		}
+    	} else {
+      		time_at_target = 0;
+    	}
+
+		// Timeout
+    	if (pros::millis() > end_time) {
+      		printf("move_pid timed out\n");
+      		break;
+    	}
+
 	}
 }
 
-void turnBot (float turnDegree) {
+void turnBot (float targetRotation, int timeout, int maxPower) {
+	imu_sensor.tare();
 
-	float turnPower = 100;
+	float delay_time = 10;
+  	double end_time = pros::millis() + timeout * 1000;
+  	double time_elapsed = 0;
+  	double time_at_target = 0;
+	float previousTurnError;
 
-	while (turnPower > 0) {
+  	const double kp = 0.8;
+  	const double kd = 0.5;
+
+	while (true) {
 
 		float getSensorData = imu_sensor.get_rotation();
 
-		float turnError = turnDegree - getSensorData;
-		float previousTurnError = turnError;
+		float turnError = targetRotation - getSensorData;
 		float turnDerivative = turnError - previousTurnError;
-		float turnPower = turnError*kP + turnDerivative*kD;
+		float previousTurnError = turnError;
+		float power = turnError*kp + turnDerivative*kd;
 
-		right_motors = -turnPower;
-		left_motors  = turnPower;
+		if (power > maxPower) {
+			power = maxPower;
+		}
+
+		int leftPower = power;
+		int rightPower = -power;
+
+		right_motors = rightPower;
+		left_motors  = leftPower;
+
+		// check exit conditions
+    	if (turnError < 0.5 and turnError > -0.5) {
+    		time_at_target += delay_time;
+    		if (time_at_target > 500) { 
+        		printf("turn_pid met the target\n");
+        		break;
+    		}
+    	} else {
+      		time_at_target = 0;
+    	}
+
+    	// Timeout
+    	if (pros::millis() > end_time) {
+      		printf("turn_pid timed out\n");
+     		break;
+    	}
 	}
 }
 
-void runIntake (float runmsec, int speed) {
 
-	intake_motors = speed;
+void runIntake (float runmsec, int power) {
 
-	pros::delay(runmsec);
+	bool intake = true;
 
-	intake_motors = 0;
+	while (intake) {
+
+		intake_motors = power;
+		pros::delay(runmsec);
+		intake_motors = 0;
+
+		break;
+	}
+
+}
+
+void runCata (float msecs, int power) {
+
+	bool cata = true;
+
+	while (cata) {
+
+		cata_motor = power;
+		pros::delay(msecs);
+		cata_motor = 0;
+
+		break;
+	}
 
 }
 
-void runCata (float msecs, int speed) {
-
-	cata_motor = speed;
-	pros::delay(msecs);
-	cata_motor = 0;
-
-}
 
 void cataRotationReset (float time) {
-	int rotationPosition = rotation_sensor.get_position();
-    int target = 0;
+    const float MIN_CATA_READY_ANGLE = 35200;
+	const float MAX_CATA_READY_ANGLE = 37000;
 
-	while (rotationPosition > 0) {
-		float rotationError = target - rotationPosition;
-		float previousRotationError = rotationError;
-		float rotationDerivative = rotationError - previousRotationError;
-		float rkP = 0.5;
-		float rkD = 0.5;
-		float rotationPower = rotationError*rkP + rotationDerivative*rkD;
-        cata_motor = rotationPower;
+	bool isCataReady = false;
+
+	float timeStart = pros::millis();
+	float timeEnd = timeStart + time;
+	
+	while (pros::millis() < timeEnd) {
+		int catapultPosition = rotation_sensor.get_position();
+
+		if (catapultPosition < MIN_CATA_READY_ANGLE or
+      		catapultPosition > MAX_CATA_READY_ANGLE) {
+    		isCataReady = false;
+  		} else {
+    		isCataReady =  true;
+		}
+
+		if (!isCataReady) {
+			cata_motor.move(60);
+		} else {
+			cata_motor.move(0);
+		}
+
+		if (pros::millis() > timeEnd) {
+			break;
+		}
+
 	}
+  	
 }
 
-void climbArm (bool open) {
 
-	armPiston.set_value(open);
+void climbArm (bool state) {
+
+	armPiston.set_value(state);
 
 }
 
-void flaps (bool value) {
+void wings (bool state) {
 
-	flapPistons.set_value(value);
+	flapPistons.set_value(state);
 
 }

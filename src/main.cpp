@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <functional>
 
-static bool starting_point = true;
+int starting_point = 0;
 
 /**
  * A callback function for LLEMU's center button.
@@ -13,16 +13,32 @@ static bool starting_point = true;
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
+
 void on_center_button() {
   static bool pressed = false;
   pressed = !pressed;
   if (pressed) {
-    pros::lcd::set_text(1, "Left Starting Point");
-    starting_point = true;
-  } else {
-    pros::lcd::set_text(1, "Right Starting Point");
-    starting_point = false;
-  }
+	starting_point = 3;
+    pros::lcd::set_text(1, "Programming Skills");
+  } 
+}
+
+void on_right_button() {
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+	starting_point = 2;
+    pros::lcd::set_text(1, "Right Auton");
+  } 
+}
+
+void on_left_button() {
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+	starting_point = 1;
+    pros::lcd::set_text(1, "Left Auton");
+  } 
 }
 
 /**
@@ -32,10 +48,31 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  /*
+  if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+    starting_point++;
+  }
+  if (starting_point > 3) {
+	starting_point = 0;
+  }
+
+  printf("%i\n", starting_point);
+  */
+  if (starting_point == 0) {
+	pros::lcd::set_text(1, "No Auton");
+  } else if (starting_point == 1) {
+	pros::lcd::set_text(1, "Left Auton");
+  } else if (starting_point == 2) {
+	pros::lcd::set_text(1, "Right Auton");
+  } else {
+	pros::lcd::set_text(1, "Skills Auton");
+  }
   pros::lcd::initialize();
   pros::lcd::set_text(1, "Started");
 
+  pros::lcd::register_btn0_cb(on_left_button);
   pros::lcd::register_btn1_cb(on_center_button);
+  pros::lcd::register_btn2_cb(on_right_button);
 
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
@@ -72,14 +109,23 @@ void competition_initialize() {}
  */
 void autonomous() {
 
-  if (starting_point == true) {
+  if (starting_point == 1) {
     pros::lcd::set_text(2, "Auton from Left Starting Point");
     autonFromLSP();
   }
 
-  if (starting_point == false) {
+  if (starting_point == 2) {
     pros::lcd::set_text(2, "Auton from Right Starting Point");
     autonFromRSP();
+  }
+
+  if (starting_point == 3) {
+	pros::lcd::set_text(2, "Skills Auton Start");
+	skillsAuton();
+  }
+
+  if (starting_point == 0) {
+	pros::lcd::set_text(2, "Do Nothing");
   }
 }
 
@@ -98,12 +144,12 @@ void autonomous() {
  */
 
 // Angles are in centidegrees
-const float MIN_CATA_READY_ANGLE = 32000;
-const float MAX_CATA_READY_ANGLE = 30000;
+const float MIN_CATA_READY_ANGLE = 16750;
+const float MAX_CATA_READY_ANGLE = 18750;
 
 bool isCataReady(float cataPosition) {
-  if (cataPosition > MIN_CATA_READY_ANGLE or
-      cataPosition < MAX_CATA_READY_ANGLE) {
+  if (cataPosition < MIN_CATA_READY_ANGLE or
+      cataPosition > MAX_CATA_READY_ANGLE) {
     return false;
   } else {
     return true;
@@ -126,10 +172,6 @@ void opcontrol() {
 
   CatapultState catapultState = CatapultState::Resetting;
 
-  // FIXME: use these
-  float cP = 0.5;
-  float cD = 0.5;
-
   while (true) {
     // Drivetrain
     // Arcade Drive
@@ -143,11 +185,11 @@ void opcontrol() {
 
     // Controls Intake
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      intake_motors = 127;
+      intake_motors.move(127);
     } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-      intake_motors = -127;
+      intake_motors.move(-127);
     } else {
-      intake_motors = 0;
+      intake_motors.move(0);
     }
 
     // Pistons
@@ -158,7 +200,7 @@ void opcontrol() {
     }
 
     // Controls arm
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       armPistonValue = !armPistonValue;
       armPiston.set_value(armPistonValue);
     }
@@ -179,11 +221,17 @@ void opcontrol() {
       }
     }
 
-    float catapultPosition = catapult_rotation_sensor.get_angle();
+    int catapultPosition = rotation_sensor.get_angle();
+
+	double getRotation = left_motors.get_positions()[0];
+
+	printf("%f\n", getRotation);
+
+	//printf("%i\n", catapultPosition);
 
     switch (catapultState) {
     case CatapultState::Resetting:
-      cata_motor.move(127);
+      cata_motor.move(70);
       if (isCataReady(catapultPosition)) {
         catapultState = CatapultState::Ready;
       }
@@ -195,13 +243,13 @@ void opcontrol() {
       cata_motor.brake();
       break;
     case CatapultState::SingleFire:
-      cata_motor.move(127);
+      cata_motor.move(90);
       if (!isCataReady(catapultPosition)) {
         catapultState = CatapultState::Resetting;
       }
       break;
     case CatapultState::ConstantFire:
-      cata_motor.move(127);
+      cata_motor.move(70);
       break;
     }
 
@@ -212,7 +260,6 @@ void opcontrol() {
     master.print(0, 0, "Temperature %f", temperatures);
     master.print(1, 0, "Temperature %f", temperatures2);
 
-    pros::delay(50); // FIXME: change back to 20
+    pros::delay(20); 
   }
 }
-

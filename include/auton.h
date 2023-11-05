@@ -3,19 +3,19 @@
 
 //mainAuton.cpp
 //Moving/Turning the bot
-void moveBot (float distancein);
-void turnBot (float turnDegree);
+void moveBot (float distancein, int timeout, int maxPower);
+void turnBot (float turnDegree, int timeout, int maxPower);
 
 //Intake
-void runIntake (float runmsec, int speed);
+void runIntake (float runmsec, int power);
 
 //Catapult
-void runCata (float msec, int speed);
+void runCata (float msec, int power);
 void cataRotationReset (float time);
 
 //Pistons
-void climbArm (bool open);
-void flaps (bool value);
+void climbArm (bool state);
+void wings (bool state);
 
 //leftAuton.cpp
 void autonFromLSP ();

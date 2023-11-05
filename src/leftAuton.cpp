@@ -3,7 +3,7 @@
 #include "auton.h"
 
 void autonFromLSP () {
-
+/*
     cataRotationReset(1000);
     moveBot(1);
     turnBot(-90);
@@ -22,5 +22,5 @@ void autonFromLSP () {
     turnBot(-90);
     moveBot(18);
     climbArm(true);
-
+*/
 }

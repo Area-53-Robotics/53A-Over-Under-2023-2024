@@ -3,15 +3,18 @@
 #include "auton.h"
 
 void autonFromRSP () {
-
-    moveBot(70);
+    
+    moveBot(-40, 3, 60);
+    turnBot(55, 2, 60);
+    moveBot(-5, 2, 50);
     /*
-    turnBot(95);
-    runIntake(3000,-127);
-    moveBot(-1);
-    turnBot(180);
+    runIntake(1000, 50);
+    
+    turnBot(215, 2, 40);
+    moveBot(-3, 1, 40);
+    
     runIntake(3000, 127);
-    turnBot(180);
+    turnBot(180, 2, 60);
     moveBot(17);
     runIntake(500, -127);
     turnBot(180);
