@@ -4,7 +4,8 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "/Users/Zoey/Desktop/Robotics Code 2023 - 2024/53A/include"
+        "/Users/Zoey/Desktop/Robotics Code 2023 - 2024/53A/include",
+        "/Users/Zoey/Desktop/Robotics Code/Robotics Code 2023 - 2024/53A/include"
       ],
       "defines": [
         "_DEBUG",
@@ -15,13 +16,13 @@
       "cStandard": "c17",
       "cppStandard": "c++17",
       "intelliSenseMode": "gcc-arm",
-      "compileCommands": "/Users/Zoey/Desktop/Robotics Code 2023 - 2024/53A/compile_commands.json",
+      "compileCommands": "/Users/Zoey/Desktop/Robotics Code/Robotics Code 2023 - 2024/53A/compile_commands.json",
       "macFrameworkPath": [
         "/System/Library/Frameworks"
       ],
       "browse": {
         "path": [
-          "/Users/Zoey/Desktop/Robotics Code 2023 - 2024/53A"
+          "/Users/Zoey/Desktop/Robotics Code/Robotics Code 2023 - 2024/53A"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
