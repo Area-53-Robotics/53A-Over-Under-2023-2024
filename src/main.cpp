@@ -1,4 +1,12 @@
 #include "main.h"
+#include "auton.h"
+#include "cata.h"
+#include "devices.h"
+
+int starting_point = 0;
+
+rd::ConsoleView console;
+rd::SelectorView selector;
 
 /**
  * A callback function for LLEMU's center button.
@@ -6,14 +14,32 @@
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
+
 void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+	starting_point = 3;
+    pros::lcd::set_text(1, "Programming Skills");
+  } 
+}
+
+void on_right_button() {
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+	starting_point = 2;
+    pros::lcd::set_text(1, "Right Auton");
+  } 
+}
+
+void on_left_button() {
+  static bool pressed = false;
+  pressed = !pressed;
+  if (pressed) {
+	starting_point = 1;
+    pros::lcd::set_text(1, "Left Auton");
+  } 
 }
 
 /**
@@ -23,10 +49,44 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+  /*
+  if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+    starting_point++;
+  }
+  if (starting_point > 3) {
+	starting_point = 0;
+  }
 
-	pros::lcd::register_btn1_cb(on_center_button);
+  printf("%i\n", starting_point);
+  */
+  if (starting_point == 0) {
+	pros::lcd::set_text(1, "No Auton");
+  } else if (starting_point == 1) {
+	pros::lcd::set_text(1, "Left Auton");
+  } else if (starting_point == 2) {
+	pros::lcd::set_text(1, "Right Auton");
+  } else {
+	pros::lcd::set_text(1, "Skills Auton");
+  }
+  pros::lcd::initialize();
+  pros::lcd::set_text(1, "Started");
+/*
+  pros::lcd::register_btn0_cb(on_left_button);
+  pros::lcd::register_btn1_cb(on_center_button);
+  pros::lcd::register_btn2_cb(on_right_button);
+*/
+  imu_sensor.reset();
+  pros::lcd::set_text(3, "IMU Calibrated");
+  
+  rd::initialize();
+  rd::register_views({ &console, &selector });
+  selector.add_autons({
+      {"Left Starting Point", &autonFromLSP},
+      {"Right Starting Point", &autonFromRSP},
+	  {"Skills Auton", &skillsAuton},
+	  {"No Auton", &noAuton}
+   });
+
 }
 
 /**
@@ -58,7 +118,27 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+
+  if (starting_point == 1) {
+    pros::lcd::set_text(2, "Auton from Left Starting Point");
+    autonFromLSP();
+  }
+
+  if (starting_point == 2) {
+    pros::lcd::set_text(2, "Auton from Right Starting Point");
+    autonFromRSP();
+  }
+
+  if (starting_point == 3) {
+	pros::lcd::set_text(2, "Skills Auton Start");
+	skillsAuton();
+  }
+
+  if (starting_point == 0) {
+	pros::lcd::set_text(2, "Do Nothing");
+  }
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -73,21 +153,126 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::MotorGroup left_mg({1,-2,3}); // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4,5,-6}); // Creates a motor group with forwards port 4 and reversed ports 4 & 6
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0); // Prints status of the emulated screen LCDs
-						 
-		// Arcade control scheme
-		int dir = master.get_analog(ANALOG_LEFT_Y); // Gets amount forward/backward from left joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X); // Gets the turn left/right from right joystick
-		left_mg = dir - turn; // Sets left motor voltage
-		right_mg = dir + turn; // Sets right motor voltage
-		pros::delay(20); // Run for 20 ms then update
-	}
+// Angles are in centidegrees
+const float MIN_CATA_READY_ANGLE = 16750;
+const float MAX_CATA_READY_ANGLE = 18750;
+
+bool isCataReady(float cataPosition) {
+  if (cataPosition < MIN_CATA_READY_ANGLE or
+      cataPosition > MAX_CATA_READY_ANGLE) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+void opcontrol() {
+  cata_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+  // User Control State Variables
+  bool flapsPistonValue = false;
+  bool armPistonValue = false;
+
+  enum class CatapultState {
+    Resetting,
+    Ready,
+    SingleFire,
+    ConstantFire,
+  };
+
+  CatapultState catapultState = CatapultState::Resetting;
+
+  while (true) {
+    // Drivetrain
+    // Arcade Drive
+    int left =
+        master.get_analog(ANALOG_LEFT_Y) + master.get_analog(ANALOG_RIGHT_X);
+    int right =
+        master.get_analog(ANALOG_LEFT_Y) - master.get_analog(ANALOG_RIGHT_X);
+
+    left_motors = left;
+    right_motors = right;
+
+    // Controls Intake
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+      intake_motor.move(127);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intake_motor.move(-127);
+    } else {
+      intake_motor.move(0);
+    }
+
+    // Pistons
+    // Controls Flaps
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      flapsPistonValue = !flapsPistonValue;
+      flapPistons.set_value(flapsPistonValue);
+    }
+
+    // Controls arm
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      armPistonValue = !armPistonValue;
+      armPiston.set_value(armPistonValue);
+    }
+
+    // Toggle repeatedly firing the catapult
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+      if (catapultState == CatapultState::ConstantFire) {
+        catapultState = CatapultState::Resetting;
+      } else {
+        catapultState = CatapultState::ConstantFire;
+      }
+    }
+
+    // Shoots catapult when pressed
+    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      if (catapultState == CatapultState::Ready) {
+        catapultState = CatapultState::SingleFire;
+      }
+    }
+
+    int catapultPosition = rotation_sensor.get_angle();
+
+	//double getRotation = left_motors.get_positions()[0];
+
+	//printf("%f\n", getRotation);
+
+	//printf("%i\n", catapultPosition);
+
+    switch (catapultState) {
+    case CatapultState::Resetting:
+      cata_motor.move(70);
+      if (isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Ready;
+      }
+      break;
+    case CatapultState::Ready:
+      if (!isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Resetting;
+      }
+      cata_motor.brake();
+      break;
+    case CatapultState::SingleFire:
+      cata_motor.move(90);
+      if (!isCataReady(catapultPosition)) {
+        catapultState = CatapultState::Resetting;
+      }
+      break;
+    case CatapultState::ConstantFire:
+      cata_motor.move(70);
+      break;
+    }
+
+	/*
+    // Print out the temperature of Motors
+    std::vector<double> leftdrivemotors = left_motors.get_temperature();
+    std::vector<double> rightdrivemotors = right_motors.get_temperature();
+
+    master.print(0, 0, "Left Temperature %f", leftdrivemotors);
+    master.print(0, 0, "Right Temperature %f", rightdrivemotors);
+	*/
+
+    pros::delay(20); 
+  }
 }

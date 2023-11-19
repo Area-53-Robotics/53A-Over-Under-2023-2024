@@ -25,3 +25,6 @@ void autonFromRSP ();
 
 //skillsAuton.cpp
 void skillsAuton();
+
+//Nothing
+void noAuton();

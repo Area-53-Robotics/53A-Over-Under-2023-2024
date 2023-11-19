@@ -18,7 +18,7 @@ void moveBot (float targetDistance, int timeout, int maxPower) {
 
 	while (true) {
 
-		double getRotation = left_motors.get_positions()[0];
+		double getRotation = left_motors.get_position();
 
 		float radius = 2;
 		float circumference = M_PI*radius*2;
@@ -113,9 +113,9 @@ void runIntake (float runmsec, int power) {
 
 	while (intake) {
 
-		intake_motors = power;
+		intake_motor = power;
 		pros::delay(runmsec);
-		intake_motors = 0;
+		intake_motor = 0;
 
 		break;
 	}
@@ -181,5 +181,9 @@ void climbArm (bool state) {
 void wings (bool state) {
 
 	flapPistons.set_value(state);
+
+}
+
+void noAuton () {
 
 }
