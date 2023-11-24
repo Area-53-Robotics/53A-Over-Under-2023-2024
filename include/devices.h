@@ -17,3 +17,6 @@ inline pros::Rotation rotation_sensor(16);
 //Pneumatics
 inline pros::adi::Pneumatics flapPistons('A', false);
 inline pros::adi::Pneumatics armPiston('H', false);
+
+//Led
+inline pros::adi::LED color('C', 12);

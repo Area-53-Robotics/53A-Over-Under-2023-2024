@@ -1,13 +1,17 @@
 #include "main.h"
 #include "auton.h"
-#include "cata.h"
+#include "leds.h"
 #include "devices.h"
+#include <sys/_intsup.h>
+#include <iostream>
+
 
 int starting_point = 0;
 
+/*
 rd::ConsoleView console;
 rd::SelectorView selector;
-
+*/
 /**
  * A callback function for LLEMU's center button.
  *
@@ -70,14 +74,15 @@ void initialize() {
   }
   pros::lcd::initialize();
   pros::lcd::set_text(1, "Started");
-/*
+
   pros::lcd::register_btn0_cb(on_left_button);
   pros::lcd::register_btn1_cb(on_center_button);
   pros::lcd::register_btn2_cb(on_right_button);
-*/
+
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
   
+  /*
   rd::initialize();
   rd::register_views({ &console, &selector });
   selector.add_autons({
@@ -86,7 +91,7 @@ void initialize() {
 	  {"Skills Auton", &skillsAuton},
 	  {"No Auton", &noAuton}
    });
-
+  */
 }
 
 /**
@@ -173,6 +178,12 @@ void opcontrol() {
   // User Control State Variables
   bool flapsPistonValue = false;
   bool armPistonValue = false;
+
+  //LEDs
+  bool ledsOn = false;
+  int red = 255;
+  int green = 0;
+  int blue = 0;
 
   enum class CatapultState {
     Resetting,
@@ -272,6 +283,18 @@ void opcontrol() {
     master.print(0, 0, "Left Temperature %f", leftdrivemotors);
     master.print(0, 0, "Right Temperature %f", rightdrivemotors);
 	*/
+
+	if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
+      ledsOn = !ledsOn;
+    }
+
+	if (ledsOn == true) {
+		//colorChange (red, green, blue);
+		//convertRGBtoHex(red, green, blue);
+		color.set_all(0x5F9EA0);
+	} else {
+		color.clear_all();
+	}
 
     pros::delay(20); 
   }
