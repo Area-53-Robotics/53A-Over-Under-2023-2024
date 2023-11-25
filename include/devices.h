@@ -19,4 +19,4 @@ inline pros::adi::Pneumatics flapPistons('A', false);
 inline pros::adi::Pneumatics armPiston('H', false);
 
 //Led
-inline pros::adi::LED color('C', 12);
+inline pros::adi::LED color('D', 12);

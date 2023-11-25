@@ -4,6 +4,7 @@
 #include "devices.h"
 #include <sys/_intsup.h>
 #include <iostream>
+#include "robodash/views/selector.hpp"
 
 
 int starting_point = 0;
@@ -181,9 +182,10 @@ void opcontrol() {
 
   //LEDs
   bool ledsOn = false;
-  int red = 255;
-  int green = 0;
-  int blue = 0;
+
+  //time stuff
+  int count = 1;
+  int timeCount = 0;
 
   enum class CatapultState {
     Resetting,
@@ -207,9 +209,9 @@ void opcontrol() {
 
     // Controls Intake
     if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-      intake_motor.move(127);
-    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       intake_motor.move(-127);
+    } else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+      intake_motor.move(127);
     } else {
       intake_motor.move(0);
     }
@@ -283,15 +285,14 @@ void opcontrol() {
     master.print(0, 0, "Left Temperature %f", leftdrivemotors);
     master.print(0, 0, "Right Temperature %f", rightdrivemotors);
 	*/
-
+	
 	if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       ledsOn = !ledsOn;
     }
 
 	if (ledsOn == true) {
-		//colorChange (red, green, blue);
-		//convertRGBtoHex(red, green, blue);
-		color.set_all(0x5F9EA0);
+		blueLEDs();
+		
 	} else {
 		color.clear_all();
 	}

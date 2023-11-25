@@ -3,7 +3,7 @@
 
 //mainAuton.cpp
 //Moving/Turning the bot
-void moveBot (float distancein, int timeout, int maxPower);
+void moveBot (float targetDistance, int timeout, int maxPower, bool reversed);
 void turnBot (float turnDegree, int timeout, int maxPower);
 
 //Intake

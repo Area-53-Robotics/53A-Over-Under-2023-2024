@@ -4,12 +4,28 @@
 
 void autonFromRSP () {
     
-    moveBot(20, 3, 60);
-
     /*
+    moveBot(40, 3, 60, false);
+    turnBot(80, 2, 60);
+    runIntake (1000, -50);
+    moveBot(9, 2, 60, true);
+    moveBot(20, 2, 127, false);
+    */
+    moveBot(40, 3, 60, true);
+    moveBot(10, 2, 127, false);
     turnBot(55, 2, 60);
-    moveBot(-5, 2, 50);
-    
+    moveBot(9, 2, 60, false);
+    turnBot(80, 2, 60);
+    moveBot(20, 2, 127, false);
+    runIntake (1000, 50);
+    turnBot(80, 2, 60);
+    moveBot(20, 2, 127, false);
+    runIntake (1000, -50);
+    moveBot(9, 2, 60, true);
+    moveBot(20, 2, 127, false);
+
+    //moveBot(10, 2, 50, false);
+    /*
     runIntake(1000, 50);
     
     turnBot(215, 2, 40);

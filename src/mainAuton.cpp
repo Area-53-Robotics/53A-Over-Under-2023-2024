@@ -3,12 +3,13 @@
 #include "auton.h"
 #include <cmath>
 
-void moveBot (float targetDistance, int timeout, int maxPower) {
+void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
+	imu_sensor.tare();
 	left_motors.tare_position();
 
 	int movePower;
-	const float kP = 1;
-	const float kD = 0.5;
+	const float kP = 0.6;
+	const float kD = 0;
 	int time_at_target = 0;
 	int delay_time = 20;
 	int start_time = pros::millis();
@@ -28,11 +29,17 @@ void moveBot (float targetDistance, int timeout, int maxPower) {
 		printf("%f\n", moveError);
 		float moveDerivative = moveError - previousMoveError;
 		float previousMoveError = moveError;
-		movePower = (moveError*kP) + (moveDerivative*kD);
+		movePower = (moveError*kP) + moveDerivative;
 
     	if (movePower > maxPower) {
       		movePower = maxPower;
     	}
+
+		if (reversed) {
+			movePower = -movePower;
+		} else {
+			movePower = movePower;
+		}
     
 		right_motors = movePower;
 		left_motors  = movePower;
@@ -58,6 +65,7 @@ void moveBot (float targetDistance, int timeout, int maxPower) {
 
 void turnBot (float targetRotation, int timeout, int maxPower) {
 	imu_sensor.tare();
+	left_motors.tare_position();
 
 	float delay_time = 10;
   	double end_time = pros::millis() + timeout * 1000;

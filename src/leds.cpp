@@ -3,7 +3,7 @@
 #include "leds.h"
 #include <cmath>
 #include <iostream>
-
+/*
 using namespace std;
  
 string rgbToHex(int num){
@@ -42,7 +42,7 @@ string rgbToHex(int num){
 		return hexCode;
 }
 
-/*
+
 // Function to convert the
 // RGB code to Hex color code
 string convertRGBtoHex(int R, int G, int B) {
@@ -60,7 +60,7 @@ string convertRGBtoHex(int R, int G, int B) {
 		return 
 	}
 }
-*/
+
 void gradient (int red, int green, int blue) {
 
 	int maxRed = 255;
@@ -130,4 +130,322 @@ void gradient (int red, int green, int blue) {
 		pros::delay(20);
 	}
 	
+}
+*/
+/*
+bool counter() {
+	int timeCount = 0;
+	int count = 1;
+
+	while (true) {
+		timeCount++;
+
+		if ((timeCount % 30) == 0) {
+			count++;
+		}
+
+		if (count > 60) {
+			count = 1;
+		}
+
+		pros::delay(20);
+	}
+}
+*/
+
+void blueLEDs () {
+  int count = 1;
+  int timeCount = 0;
+
+  while (true) {
+		timeCount++;
+
+		if ((timeCount % 30) == 0) {
+			count++;
+		}
+
+		if (count > 60) {
+			count = 1;
+		}
+		
+		if (count == 1) {
+			color.set_all(0x003399);
+		} else if (count == 2) {
+			color.set_all(0x003cb3);
+		} else if (count == 3) {
+			color.set_all(0x0044cc);
+		} else if (count == 4) {
+			color.set_all(0x004de6);
+		} else if (count == 5) {
+			color.set_all(0x0055ff);
+		} else if (count == 6) {
+			color.set_all(0x1a66ff);
+		} else if (count == 7) {
+			color.set_all(0x3377ff);
+		} else if (count == 8) {
+			color.set_all(0x4d88ff);
+		} else if (count == 9) {
+			color.set_all(0x6699ff);
+		} else if (count == 10) {
+			color.set_all(0x80aaff);
+		} else if (count == 11) {
+			color.set_all(0x99bbff);
+		} else if (count == 12) {
+			color.set_all(0xb3ccff);
+		} else if (count == 13) {
+			color.set_all(0xccddff);
+		} else if (count == 14) {
+			color.set_all(0xe6eeff);
+		} else if (count == 15) {
+			color.set_all(0xffffff);
+		} else if (count == 16) {
+			color.set_all(0x9ABDDC);
+		} else if (count == 17) {
+			color.set_all(0xBCD2E8);
+		} else if (count == 18) {
+			color.set_all(0x91BAD6);
+		} else if (count == 19) {
+			color.set_all(0x73A5C6);
+		} else if (count == 20) {
+			color.set_all(0x528AAE);
+		} else if (count == 16) {
+			color.set_all(0xe6ffe6);
+		} else if (count == 17) {
+			color.set_all(0xccffcc);
+		} else if (count == 18) {
+			color.set_all(0xb3ffb3);
+		} else if (count == 19) {
+			color.set_all(0x99ff99);
+		} else if (count == 20) {
+			color.set_all(0x80ff80);
+		} else if (count == 21) {
+			color.set_all(0x66ff66);
+		} else if (count == 22) {
+			color.set_all(0x4dff4d);
+		} else if (count == 23) {
+			color.set_all(0x33ff33);
+		} else if (count == 24) {
+			color.set_all(0x1aff1a);
+		} else if (count == 25) {
+			color.set_all(0x00ff00);
+		} else if (count == 26) {
+			color.set_all(0x00e600);
+		} else if (count == 27) {
+			color.set_all(0x00cc00);
+		} else if (count == 28) {
+			color.set_all(0x00b300);
+		} else if (count == 29) {
+			color.set_all(0x009900);
+		} else if (count == 30) {
+			color.set_all(0x008000);
+		} else if (count == 31) {
+			color.set_all(0x006600);
+		} else if (count == 31) {
+			color.set_all(0x008000);
+		} else if (count == 32) {
+			color.set_all(0x009900);
+		} else if (count == 33) {
+			color.set_all(0x00b300);
+		} else if (count == 34) {
+			color.set_all(0x00cc00);
+		} else if (count == 35) {
+			color.set_all(0x00e600);
+		} else if (count == 36) {
+			color.set_all(0x00ff00);
+		} else if (count == 37) {
+			color.set_all(0x1aff1a);
+		} else if (count == 38) {
+			color.set_all(0x33ff33);
+		} else if (count == 39) {
+			color.set_all(0x4dff4d);
+		} else if (count == 40) {
+			color.set_all(0x66ff66);
+		} else if (count == 41) {
+			color.set_all(0x80ff80);
+		} else if (count == 42) {
+			color.set_all(0x99ff99);
+		} else if (count == 43) {
+			color.set_all(0xb3ffb3);
+		} else if (count == 44) {
+			color.set_all(0xccffcc);
+		} else if (count == 45) {
+			color.set_all(0xe6ffe6);
+		} else if (count == 46) {
+			color.set_all(0xffffff);
+		} else if (count == 47) {
+			color.set_all(0xe6eeff);
+		} else if (count == 48) {
+			color.set_all(0xccddff);
+		} else if (count == 49) {
+			color.set_all(0xb3ccff);
+		} else if (count == 50) {
+			color.set_all(0x99bbff);
+		} else if (count == 51) {
+			color.set_all(0x80aaff);
+		} else if (count == 52) {
+			color.set_all(0x6699ff);
+		} else if (count == 53) {
+			color.set_all(0x4d88ff);
+		} else if (count == 54) {
+			color.set_all(0x3377ff);
+		} else if (count == 55) {
+			color.set_all(0x1a66ff);
+		} else if (count == 56) {
+			color.set_all(0x0055ff);
+		} else if (count == 57) {
+			color.set_all(0x004de6);
+		} else if (count == 58) {
+			color.set_all(0x0044cc);
+		} else if (count == 59) {
+			color.set_all(0x003cb3);
+		} else if (count == 60) {
+			color.set_all(0x003399);
+		}
+
+		pros::delay(20);
+  }
+}
+
+void redLEDs () {
+  int count = 1;
+  int timeCount = 0;
+
+	while (true) {
+		timeCount++;
+
+		if ((timeCount % 30) == 0) {
+			count++;
+		}
+
+		if (count > 60) {
+			count = 1;
+		}
+		
+		if (count == 1) {
+			color.set_all(0x990000);
+		} else if (count == 2) {
+			color.set_all(0xb30000);
+		} else if (count == 3) {
+			color.set_all(0xcc0000);
+		} else if (count == 4) {
+			color.set_all(0xe60000);
+		} else if (count == 5) {
+			color.set_all(0xff0000);
+		} else if (count == 6) {
+			color.set_all(0xff1a1a);
+		} else if (count == 7) {
+			color.set_all(0xff3333);
+		} else if (count == 8) {
+			color.set_all(0xff4d4d);
+		} else if (count == 9) {
+			color.set_all(0xff6666);
+		} else if (count == 10) {
+			color.set_all(0xff8080);
+		} else if (count == 11) {
+			color.set_all(0xff9999);
+		} else if (count == 12) {
+			color.set_all(0xffb3b3);
+		} else if (count == 13) {
+			color.set_all(0xffb3b3);
+		} else if (count == 14) {
+			color.set_all(0xffe6e6);
+		} else if (count == 15) {
+			color.set_all(0xffffff);
+		} else if (count == 16) {
+			color.set_all(0xe6ffe6);
+		} else if (count == 17) {
+			color.set_all(0xccffcc);
+		} else if (count == 18) {
+			color.set_all(0xb3ffb3);
+		} else if (count == 19) {
+			color.set_all(0x99ff99);
+		} else if (count == 20) {
+			color.set_all(0x80ff80);
+		} else if (count == 21) {
+			color.set_all(0x66ff66);
+		} else if (count == 22) {
+			color.set_all(0x4dff4d);
+		} else if (count == 23) {
+			color.set_all(0x33ff33);
+		} else if (count == 24) {
+			color.set_all(0x1aff1a);
+		} else if (count == 25) {
+			color.set_all(0x00ff00);
+		} else if (count == 26) {
+			color.set_all(0x00e600);
+		} else if (count == 27) {
+			color.set_all(0x00cc00);
+		} else if (count == 28) {
+			color.set_all(0x00b300);
+		} else if (count == 29) {
+			color.set_all(0x009900);
+		} else if (count == 30) {
+			color.set_all(0x008000);
+		} else if (count == 31) {
+			color.set_all(0x006600);
+		} else if (count == 31) {
+			color.set_all(0x008000);
+		} else if (count == 32) {
+			color.set_all(0x009900);
+		} else if (count == 33) {
+			color.set_all(0x00b300);
+		} else if (count == 34) {
+			color.set_all(0x00cc00);
+		} else if (count == 35) {
+			color.set_all(0x00e600);
+		} else if (count == 36) {
+			color.set_all(0x00ff00);
+		} else if (count == 37) {
+			color.set_all(0x1aff1a);
+		} else if (count == 38) {
+			color.set_all(0x33ff33);
+		} else if (count == 39) {
+			color.set_all(0x4dff4d);
+		} else if (count == 40) {
+			color.set_all(0x66ff66);
+		} else if (count == 41) {
+			color.set_all(0x80ff80);
+		} else if (count == 42) {
+			color.set_all(0x99ff99);
+		} else if (count == 43) {
+			color.set_all(0xb3ffb3);
+		} else if (count == 44) {
+			color.set_all(0xccffcc);
+		} else if (count == 45) {
+			color.set_all(0xe6ffe6);
+		} else if (count == 46) {
+			color.set_all(0xffffff);
+		} else if (count == 47) {
+			color.set_all(0xffe6e6);
+		} else if (count == 48) {
+			color.set_all(0xffb3b3);
+		} else if (count == 49) {
+			color.set_all(0xffb3b3);
+		} else if (count == 50) {
+			color.set_all(0xff9999);
+		} else if (count == 51) {
+			color.set_all(0xff8080);
+		} else if (count == 52) {
+			color.set_all(0xff6666);
+		} else if (count == 53) {
+			color.set_all(0xff4d4d);
+		} else if (count == 54) {
+			color.set_all(0xff3333);
+		} else if (count == 55) {
+			color.set_all(0xff1a1a);
+		} else if (count == 56) {
+			color.set_all(0xff0000);
+		} else if (count == 57) {
+			color.set_all(0xe60000);
+		} else if (count == 58) {
+			color.set_all(0xcc0000);
+		} else if (count == 59) {
+			color.set_all(0xb30000);
+		} else if (count == 60) {
+			color.set_all(0x990000);
+		}
+
+		pros::delay(20);
+	}
+
 }
