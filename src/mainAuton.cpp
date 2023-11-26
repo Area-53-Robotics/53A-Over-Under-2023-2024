@@ -29,7 +29,7 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
 		printf("%f\n", moveError);
 		float moveDerivative = moveError - previousMoveError;
 		float previousMoveError = moveError;
-		movePower = (moveError*kP) + moveDerivative;
+		movePower = (moveError*kP) + moveDerivative + 15;
 
     	if (movePower > maxPower) {
       		movePower = maxPower;
@@ -89,6 +89,14 @@ void turnBot (float targetRotation, int timeout, int maxPower) {
 			power = maxPower;
 		}
 
+		/*
+		if (reversed) {
+			power = -power;
+		} else {
+			power = power;
+		}
+		*/
+
 		int leftPower = power;
 		int rightPower = -power;
 
@@ -115,17 +123,14 @@ void turnBot (float targetRotation, int timeout, int maxPower) {
 }
 
 
-void runIntake (float runmsec, int power) {
+void runIntake (bool running, int power) {
 
-	bool intake = true;
-
-	while (intake) {
+	if (running) {
 
 		intake_motor = power;
-		pros::delay(runmsec);
-		intake_motor = 0;
 
-		break;
+	} else {
+		intake_motor = power;
 	}
 
 }

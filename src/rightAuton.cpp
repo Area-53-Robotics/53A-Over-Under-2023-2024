@@ -3,48 +3,37 @@
 #include "auton.h"
 
 void autonFromRSP () {
-    
-    /*
-    moveBot(40, 3, 60, false);
-    turnBot(80, 2, 60);
-    runIntake (1000, -50);
-    moveBot(9, 2, 60, true);
-    moveBot(20, 2, 127, false);
-    */
-    moveBot(40, 3, 60, true);
-    moveBot(10, 2, 127, false);
-    turnBot(55, 2, 60);
-    moveBot(9, 2, 60, false);
-    turnBot(80, 2, 60);
-    moveBot(20, 2, 127, false);
-    runIntake (1000, 50);
-    turnBot(80, 2, 60);
-    moveBot(20, 2, 127, false);
-    runIntake (1000, -50);
-    moveBot(9, 2, 60, true);
-    moveBot(20, 2, 127, false);
 
-    //moveBot(10, 2, 50, false);
-    /*
-    runIntake(1000, 50);
-    
-    turnBot(215, 2, 40);
-    moveBot(-3, 1, 40);
-    
-    runIntake(3000, 127);
+    moveBot(20, 2, 100, false);
+    runIntake(true, -60);
+    pros::delay(750);
+    runIntake(false, 0);
+    turnBot(-45, 2, 50);
+    moveBot(20, 2, 127, false);
+    runIntake(true, 127);
+    moveBot(10, 1, 100, false);
+    turnBot(-45, 2, 50);
+    runIntake(false, 0);
+    wings(true);
+    moveBot(30, 2, 100, true);
+    wings(false);
+    moveBot(10, 2, 100, false);
+    turnBot(180, 2, 50);
+    runIntake(true, -60);
+    moveBot(8, 2, 100, false);
+    pros::delay(500);
+    runIntake(false, 0);
+    turnBot(135, 2, 50);
+    moveBot(25, 2, 100, false);
+    runIntake(true, 127);
+    turnBot(20, 1, 50);
+    moveBot(10, 2, 100, false);
+    pros::delay(500);
     turnBot(180, 2, 60);
-    moveBot(17);
-    runIntake(500, -127);
-    turnBot(180);
-    moveBot(41);
-    runIntake(500, 127);
-    turnBot(180);
-    moveBot(41);
-    runIntake(500, -127);
-    turnBot(90);
-    moveBot(65);
-    turnBot(90);
-    moveBot(17);
-    turnBot(180);
-    */
+    runIntake(true, -127);
+    moveBot(25, 2, 100, false);
+    pros::delay(100);
+    runIntake(false, 0);
+    moveBot(10, 1, 100, true);
+
 }

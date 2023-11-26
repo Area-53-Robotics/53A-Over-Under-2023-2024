@@ -5,14 +5,12 @@
 #include <sys/_intsup.h>
 #include <iostream>
 #include "robodash/views/selector.hpp"
+#include "robodash/views/image.hpp"
 
 
 int starting_point = 0;
 
-/*
-rd::ConsoleView console;
-rd::SelectorView selector;
-*/
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -82,7 +80,7 @@ void initialize() {
 
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
-  
+
   /*
   rd::initialize();
   rd::register_views({ &console, &selector });
@@ -144,6 +142,8 @@ void autonomous() {
   if (starting_point == 0) {
 	pros::lcd::set_text(2, "Do Nothing");
   }
+
+  //selector.do_auton();
 }
 
 /**

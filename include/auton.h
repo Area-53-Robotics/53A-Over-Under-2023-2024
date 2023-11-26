@@ -7,7 +7,7 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed);
 void turnBot (float turnDegree, int timeout, int maxPower);
 
 //Intake
-void runIntake (float runmsec, int power);
+void runIntake (bool running, int power);
 
 //Catapult
 void runCata (float msec, int power);

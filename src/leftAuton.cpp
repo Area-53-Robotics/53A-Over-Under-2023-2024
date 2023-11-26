@@ -3,24 +3,15 @@
 #include "auton.h"
 
 void autonFromLSP () {
-/*
-    cataRotationReset(1000);
-    moveBot(1);
-    turnBot(-90);
-    moveBot(12);
-    turnBot(-45);
-    moveBot(1);
-    runIntake(500, 127);
-    moveBot(-3);
-    turnBot(180);
-    runCata(1000, 127);
-    cataRotationReset(1000);
-    turnBot(135);
-    moveBot(5);
-    turnBot(-90);
-    moveBot(24);
-    turnBot(-90);
-    moveBot(18);
-    climbArm(true);
-*/
+
+    moveBot(30, 2, 100, false);
+    turnBot(-90, 1, 50);
+    wings(true);
+    moveBot(15, 2, 100, true);
+    wings(false);
+    moveBot(15, 2, 100, false);
+    runIntake(true, -100);
+    moveBot(15, 2, 100, false);
+    runIntake(false, 0);
+    moveBot(5, 2, 100, true);
 }
