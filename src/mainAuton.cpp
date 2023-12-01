@@ -142,7 +142,7 @@ void runCata (float msecs, int power) {
 	while (cata) {
 
 		cata_motor = power;
-		pros::delay(msecs);
+		pros::delay(msecs/1000);
 		cata_motor = 0;
 
 		break;

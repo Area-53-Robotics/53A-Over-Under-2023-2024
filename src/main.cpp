@@ -161,8 +161,8 @@ void autonomous() {
  */
 
 // Angles are in centidegrees
-const float MIN_CATA_READY_ANGLE = 16750;
-const float MAX_CATA_READY_ANGLE = 18750;
+const float MIN_CATA_READY_ANGLE = 6250;
+const float MAX_CATA_READY_ANGLE = 7250;
 
 bool isCataReady(float cataPosition) {
   if (cataPosition < MIN_CATA_READY_ANGLE or
@@ -253,9 +253,10 @@ void opcontrol() {
 
 	//printf("%i\n", catapultPosition);
 
+  
     switch (catapultState) {
     case CatapultState::Resetting:
-      cata_motor.move(70);
+      cata_motor.move(80);
       if (isCataReady(catapultPosition)) {
         catapultState = CatapultState::Ready;
       }
@@ -267,16 +268,19 @@ void opcontrol() {
       cata_motor.brake();
       break;
     case CatapultState::SingleFire:
-      cata_motor.move(90);
+      cata_motor.move(100);
       if (!isCataReady(catapultPosition)) {
         catapultState = CatapultState::Resetting;
       }
       break;
     case CatapultState::ConstantFire:
-      cata_motor.move(70);
+      cata_motor.move(100);
+      if (isCataReady(catapultPosition)) {
+        cata_motor.brake();
+      }
       break;
     }
-
+  
 	/*
     // Print out the temperature of Motors
     std::vector<double> leftdrivemotors = left_motors.get_temperature();

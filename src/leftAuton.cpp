@@ -9,9 +9,9 @@ void autonFromLSP () {
     wings(true);
     moveBot(15, 2, 100, true);
     wings(false);
-    moveBot(15, 2, 100, false);
+    moveBot(10, 2, 100, false);
     runIntake(true, -100);
-    moveBot(15, 2, 100, false);
+    moveBot(10, 2, 100, false);
     runIntake(false, 0);
-    moveBot(5, 2, 100, true);
+    turnBot(180, 2, 100);
 }
