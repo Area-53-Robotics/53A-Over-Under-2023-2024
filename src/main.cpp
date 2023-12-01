@@ -141,6 +141,7 @@ void autonomous() {
 
   if (starting_point == 0) {
 	pros::lcd::set_text(2, "Do Nothing");
+    noAuton();
   }
 
   //selector.do_auton();
@@ -161,8 +162,8 @@ void autonomous() {
  */
 
 // Angles are in centidegrees
-const float MIN_CATA_READY_ANGLE = 6250;
-const float MAX_CATA_READY_ANGLE = 7250;
+const float MIN_CATA_READY_ANGLE = 4000;
+const float MAX_CATA_READY_ANGLE = 5500;
 
 bool isCataReady(float cataPosition) {
   if (cataPosition < MIN_CATA_READY_ANGLE or
@@ -186,7 +187,7 @@ void opcontrol() {
   //time stuff
   int count = 1;
   int timeCount = 0;
-
+  
   enum class CatapultState {
     Resetting,
     Ready,
@@ -251,7 +252,7 @@ void opcontrol() {
 
 	//printf("%f\n", getRotation);
 
-	//printf("%i\n", catapultPosition);
+	printf("%i\n", catapultPosition);
 
   
     switch (catapultState) {
@@ -268,18 +269,19 @@ void opcontrol() {
       cata_motor.brake();
       break;
     case CatapultState::SingleFire:
-      cata_motor.move(100);
+      cata_motor.move(127);
       if (!isCataReady(catapultPosition)) {
         catapultState = CatapultState::Resetting;
       }
       break;
     case CatapultState::ConstantFire:
-      cata_motor.move(100);
-      if (isCataReady(catapultPosition)) {
-        cata_motor.brake();
-      }
+      cata_motor.move(127);
       break;
     }
+
+    //Used cata_motor.brake() in an attempt to make a delay, ended up creating erratic movements
+    
+    //when power is 100, did not run smoothly
   
 	/*
     // Print out the temperature of Motors
