@@ -28,3 +28,6 @@ void skillsAuton();
 
 //Nothing
 void noAuton();
+
+//reset to rotation
+void resetandCata (bool onOff);

@@ -31,6 +31,7 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
 		float previousMoveError = moveError;
 		movePower = (moveError*kP) + moveDerivative + 15;
 
+		movePower += 20;
     	if (movePower > maxPower) {
       		movePower = maxPower;
     	}
@@ -130,7 +131,8 @@ void runIntake (bool running, int power) {
 		intake_motor = power;
 
 	} else {
-		intake_motor = power;
+
+		intake_motor.brake();
 	}
 
 }
@@ -142,7 +144,7 @@ void runCata (float msecs, int power) {
 	while (cata) {
 
 		cata_motor = power;
-		pros::delay(msecs/1000);
+		pros::delay(msecs);
 		cata_motor = 0;
 
 		break;
@@ -199,4 +201,38 @@ void wings (bool state) {
 
 void noAuton () {
 
+}
+
+void resetandCata (bool onOff) {
+	imu_sensor.tare();
+	float initialSensorData = imu_sensor.get_rotation();
+	const double kp = 0.8;
+	float sensorData;
+	float error;
+	float derivative;
+	float previousError;
+	float power;
+
+	while(onOff) {
+		sensorData = imu_sensor.get_rotation();
+		if (sensorData != initialSensorData) {
+			error = initialSensorData - sensorData;
+			derivative = error - previousError;
+			previousError = error;
+			power = error*kp + derivative;
+
+			int leftPower = power;
+			int rightPower = -power;
+
+			right_motors = rightPower;
+			left_motors  = leftPower;
+
+			cata_motor = 100;
+
+			break;
+		} else {
+			power = 0;
+			cata_motor.brake();
+		}
+	}
 }

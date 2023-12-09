@@ -1,13 +1,17 @@
 #pragma once
 #include "main.h"
 
-//Motors
+//Controller
 inline pros::Controller master(pros::E_CONTROLLER_MASTER);
+
+//Drive Train motors (front, back bottom, back top)
 inline pros::MotorGroup left_motors ({-1, 20, -11});
 inline pros::MotorGroup right_motors ({10, -12, 17});
 
-//Intake motors: left, right
+//Intake motor
 inline pros::Motor intake_motor (9);
+
+//Catapult motor
 inline pros::Motor cata_motor (-13);
 
 //Sensors
