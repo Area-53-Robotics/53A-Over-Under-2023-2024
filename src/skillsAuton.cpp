@@ -6,15 +6,22 @@
 void skillsAuton () {
     
     //resetandCata(true);
-    //pros::delay(1000);
-    resetandCata(false);
-    turnBot(35, 2, 127);
-    moveBot(5, 1, 50, true);
-    turnBot(90, 2, 50);
-    moveBot(10, 2, 100, false);
+    //pros::delay(45000);
+    //resetandCata(false);
+    turnBot(90, 1, 50);
+    runIntake(true, -127);
+    moveBot(20, 2, 127, false);
+    moveBot(3, 1, 50, true);
+    moveBot(10, 1, 100, false);
+    runIntake(false, 0);
+    pros::delay(2000);
+    turnBot(120, 2, 50);
+    moveBot(13, 2, 100, false);
     turnBot(-90, 1, 60);
+    moveBot(15, 2, 100, false);
+    turnBot(-70, 1, 50);
     wings(true);
-    moveBot(10, 2, 127, true);
+    moveBot(20, 2, 127, true);
     
 }
 
