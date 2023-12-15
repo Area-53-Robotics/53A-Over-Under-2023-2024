@@ -213,7 +213,7 @@ void resetandCata (bool onOff) {
 	float previousError;
 	float power;
 
-	while(onOff) {
+	while (onOff) {
 		sensorData = imu_sensor.get_rotation();
 		if (sensorData != initialSensorData) {
 			error = initialSensorData - sensorData;
@@ -228,11 +228,12 @@ void resetandCata (bool onOff) {
 			left_motors  = leftPower;
 
 			cata_motor = 100;
-
+			
 			break;
 		} else {
 			power = 0;
-			cata_motor.brake();
+			cata_motor = 0;
+			break;
 		}
 	}
 }

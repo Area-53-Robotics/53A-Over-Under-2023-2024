@@ -5,14 +5,12 @@
 
 void skillsAuton () {
     
-    //resetandCata(true);
-    //pros::delay(45000);
-    //resetandCata(false);
-    turnBot(90, 1, 50);
+    runCata(5000, 105);
+    turnBot(100, 1, 50);
     runIntake(true, -127);
     moveBot(20, 2, 127, false);
     moveBot(3, 1, 50, true);
-    moveBot(10, 1, 100, false);
+    moveBot(20, 1, 127, false);
     runIntake(false, 0);
     pros::delay(2000);
     turnBot(120, 2, 50);
@@ -22,13 +20,19 @@ void skillsAuton () {
     turnBot(-70, 1, 50);
     wings(true);
     moveBot(20, 2, 127, true);
-    
 }
 
-//test #1: added new reset function, tested catapult (worked)
-//created starter, removed move function at the beginning because starter has been created
-//test #2: wings did not work
-//test #3, did not get over the barrier, right wing broke
-//test #4: did not go far enough into the center
-//test #5: went too far into the center 
-//changed route a bit, since angled approach was complicated
+//Trial #1: Catapult did not stop running (program ended)
+//Trial #2: Catapult did not stop running (program ended)
+//Trial #3: Catapult did not run, bot got stuck under the goal, did not move for the rest of the time
+//Trial #4: Angle of second turn was off (did not turn enough), ended in a crash with the wall, also cata didn't turn off 
+//Trial #5: Spun randomly
+//Trial #6: Angle of second turn was off (did not turn enough)
+//Trial #7: Worked but triball did not make it into the goal
+//Trial #8: Worked, but triball didn't make it to the goal
+//Trial #9: Second turn turned too far, triball didn't make it into the goal
+//Made new starter
+//Trial #10: Wing got stuck on barrier
+//Trial #11: Bot did not make it across the barrier
+//Trial #12: WIng got stuck on barrier
+
