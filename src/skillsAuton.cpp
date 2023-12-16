@@ -9,14 +9,12 @@ void skillsAuton () {
     turnBot(100, 1, 50);
     runIntake(true, -127);
     moveBot(20, 2, 127, false);
-    moveBot(3, 1, 50, true);
-    moveBot(20, 1, 127, false);
+    moveBot(3, 1, 20, true);
     runIntake(false, 0);
-    pros::delay(2000);
-    turnBot(120, 2, 50);
-    moveBot(13, 2, 100, false);
+    turnBot(100, 2, 50);
+    moveBot(10, 2, 100, false);
     turnBot(-90, 1, 60);
-    moveBot(15, 2, 100, false);
+    moveBot(18, 2, 127, false);
     turnBot(-70, 1, 50);
     wings(true);
     moveBot(20, 2, 127, true);
