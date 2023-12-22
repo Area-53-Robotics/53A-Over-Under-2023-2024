@@ -279,18 +279,9 @@ void opcontrol() {
       break;
     }
 
-    //Used cata_motor.brake() in an attempt to make a delay, ended up creating erratic movements
-    
-    //when power is 100, did not run smoothly
-  
-	/*
-    // Print out the temperature of Motors
-    std::vector<double> leftdrivemotors = left_motors.get_temperature();
-    std::vector<double> rightdrivemotors = right_motors.get_temperature();
-
-    master.print(0, 0, "Left Temperature %f", leftdrivemotors);
-    master.print(0, 0, "Right Temperature %f", rightdrivemotors);
-	*/
+	
+  // Print out the temperature of Motors
+  //std::vector<double> temperaturess = left_motors.get_temperatures();
 	
 	if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       ledsOn = !ledsOn;

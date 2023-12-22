@@ -5,7 +5,7 @@
 
 void skillsAuton () {
     
-    runCata(5000, 105);
+    runCata(44000, 105);
     turnBot(100, 1, 50);
     runIntake(true, -127);
     moveBot(20, 2, 127, false);
@@ -17,7 +17,7 @@ void skillsAuton () {
     moveBot(18, 2, 127, false);
     turnBot(-70, 1, 50);
     wings(true);
-    moveBot(20, 2, 127, true);
+    moveBot(40, 2, 127, true);
 }
 
 //Trial #1: Catapult did not stop running (program ended)
