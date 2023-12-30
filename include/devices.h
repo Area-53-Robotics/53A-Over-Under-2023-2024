@@ -12,15 +12,17 @@ inline pros::MotorGroup right_motors ({10, -12, 17});
 inline pros::Motor intake_motor (9);
 
 //Catapult motor
-inline pros::Motor cata_motor (-13);
+inline pros::Motor slapper_motor (-13);
 
 //Sensors
 inline pros::Imu imu_sensor(19);
 inline pros::Rotation rotation_sensor(16);
 
 //Pneumatics
-inline pros::adi::Pneumatics flapPistons('A', false);
+inline pros::adi::Pneumatics hWingPistons('A', false);
+inline pros::adi::Pneumatics vWingPistons('B', false);
 inline pros::adi::Pneumatics armPiston('H', false);
+inline pros::adi::Pneumatics blockerPistons('C', false);
 
 //Led
 inline pros::adi::LED color('D', 12);

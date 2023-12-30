@@ -143,9 +143,9 @@ void runCata (float msecs, int power) {
 
 	while (cata) {
 
-		cata_motor = power;
+		slapper_motor = power;
 		pros::delay(msecs);
-		cata_motor = 0;
+		slapper_motor = 0;
 
 		break;
 	}
@@ -173,9 +173,9 @@ void cataRotationReset (float time) {
 		}
 
 		if (!isCataReady) {
-			cata_motor.move(60);
+			slapper_motor.move(60);
 		} else {
-			cata_motor.move(0);
+			slapper_motor.move(0);
 		}
 
 		if (pros::millis() > timeEnd) {
@@ -195,7 +195,7 @@ void climbArm (bool state) {
 
 void wings (bool state) {
 
-	flapPistons.set_value(state);
+	hWingPistons.set_value(state);
 
 }
 
@@ -227,12 +227,12 @@ void resetandCata (bool onOff) {
 			right_motors = rightPower;
 			left_motors  = leftPower;
 
-			cata_motor = 100;
+			slapper_motor = 100;
 			
 			break;
 		} else {
 			power = 0;
-			cata_motor = 0;
+			slapper_motor = 0;
 			break;
 		}
 	}

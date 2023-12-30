@@ -175,10 +175,10 @@ bool isCataReady(float cataPosition) {
 }
 
 void opcontrol() {
-  cata_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+  slapper_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
   // User Control State Variables
-  bool flapsPistonValue = false;
+  bool hWingsPistonValue = false;
   bool armPistonValue = false;
 
   //LEDs
@@ -220,8 +220,8 @@ void opcontrol() {
     // Pistons
     // Controls Flaps
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      flapsPistonValue = !flapsPistonValue;
-      flapPistons.set_value(flapsPistonValue);
+      hWingsPistonValue = !hWingsPistonValue;
+      hWingPistons.set_value(hWingsPistonValue);
     }
 
     // Controls arm
@@ -257,7 +257,7 @@ void opcontrol() {
   
     switch (catapultState) {
     case CatapultState::Resetting:
-      cata_motor.move(80);
+      slapper_motor.move(80);
       if (isCataReady(catapultPosition)) {
         catapultState = CatapultState::Ready;
       }
@@ -266,23 +266,26 @@ void opcontrol() {
       if (!isCataReady(catapultPosition)) {
         catapultState = CatapultState::Resetting;
       }
-      cata_motor.brake();
+      slapper_motor.brake();
       break;
     case CatapultState::SingleFire:
-      cata_motor.move(127);
+      slapper_motor.move(127);
       if (!isCataReady(catapultPosition)) {
         catapultState = CatapultState::Resetting;
       }
       break;
     case CatapultState::ConstantFire:
-      cata_motor.move(127);
+      slapper_motor.move(127);
       break;
     }
 
 	
   // Print out the temperature of Motors
-  //std::vector<double> temperaturess = left_motors.get_temperatures();
+  
+  double rightDriveTemperatures = right_motors.get_temperature();
 	
+	//pros::lcd::print(5, , 2);
+
 	if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       ledsOn = !ledsOn;
     }
