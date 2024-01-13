@@ -162,6 +162,7 @@ void autonomous() {
  */
 
 // Angles are in centidegrees
+/*
 const float MIN_CATA_READY_ANGLE = 4000;
 const float MAX_CATA_READY_ANGLE = 5500;
 
@@ -173,7 +174,7 @@ bool isCataReady(float cataPosition) {
     return true;
   }
 }
-
+*/
 void opcontrol() {
   slapper_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
@@ -187,7 +188,11 @@ void opcontrol() {
   //time stuff
   int count = 1;
   int timeCount = 0;
+
+  //slapper
+  bool slapperstate = false;
   
+  /*
   enum class CatapultState {
     Resetting,
     Ready,
@@ -196,7 +201,7 @@ void opcontrol() {
   };
 
   CatapultState catapultState = CatapultState::Resetting;
-
+  */
   while (true) {
     // Drivetrain
     // Arcade Drive
@@ -224,13 +229,26 @@ void opcontrol() {
       hWingPistons.set_value(hWingsPistonValue);
     }
 
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+      slapperstate = !slapperstate;
+    } 
+
+    if (slapperstate == true) {
+      slapper_motor = 127;
+    } else {
+      slapper_motor = 0;
+    }
+
+    /*
     // Controls arm
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       armPistonValue = !armPistonValue;
       armPiston.set_value(armPistonValue);
     }
+    */
 
-    // Toggle repeatedly firing the catapult
+    // Repeat Fire Slapper
+    /*
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
       if (catapultState == CatapultState::ConstantFire) {
         catapultState = CatapultState::Resetting;
@@ -278,7 +296,7 @@ void opcontrol() {
       slapper_motor.move(127);
       break;
     }
-
+  */
 	
   // Print out the temperature of Motors
   
