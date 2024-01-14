@@ -14,7 +14,7 @@ void runCata (float msec, int power);
 void cataRotationReset (float time);
 
 //Pistons
-void climbArm (bool state);
+void blocker (bool state);
 void wings (bool state);
 
 //leftAuton.cpp

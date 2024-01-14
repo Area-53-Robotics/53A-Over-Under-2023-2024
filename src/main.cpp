@@ -180,7 +180,8 @@ void opcontrol() {
 
   // User Control State Variables
   bool hWingsPistonValue = false;
-  bool armPistonValue = false;
+  bool vWingsPistonValue = false;
+  bool blockerPistonValue = false;
 
   //LEDs
   bool ledsOn = false;
@@ -223,15 +224,27 @@ void opcontrol() {
     }
 
     // Pistons
-    // Controls Flaps
+    // Controls Wings
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
       hWingsPistonValue = !hWingsPistonValue;
       hWingPistons.set_value(hWingsPistonValue);
     }
 
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      vWingsPistonValue = !vWingsPistonValue;
+      vWingPistons.set_value(vWingsPistonValue);
+    }
+
+    //Slapper
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       slapperstate = !slapperstate;
     } 
+
+    //Blocker/Climb
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) {
+      blockerPistonValue = !blockerPistonValue;
+      blockerPistons.set_value(blockerPistonValue);
+    }
 
     if (slapperstate == true) {
       slapper_motor = 127;

@@ -187,9 +187,9 @@ void cataRotationReset (float time) {
 }
 
 
-void climbArm (bool state) {
+void blocker (bool state) {
 
-	armPiston.set_value(state);
+	blockerPistons.set_value(state);
 
 }
 

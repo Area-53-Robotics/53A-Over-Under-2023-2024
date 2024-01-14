@@ -26,7 +26,7 @@ void autonFromLSP () {
     turnBot(90, 1, 50);
     moveBot(5, 1, 50, false);
     turnBot(-65, 1, 40);
-    climbArm(true);
+    blocker(true);
     moveBot(7, 1, 100, false);
 
 }
