@@ -6,9 +6,9 @@ void autonFromLSP () {
     
     moveBot(20, 2, 90, false);
     turnBot(-90, 1, 50);
-    wings(true);
+    hwings(true);
     moveBot(20, 1, 127, true);
-    wings(false);
+    hwings(false);
     moveBot(10, 1, 100, false);
     runIntake(true, -100);
     pros::delay(1000);
@@ -19,10 +19,10 @@ void autonFromLSP () {
     moveBot(15, 1, 127, false);
     turnBot(60, 1, 40);
     moveBot(5, 1, 100, false);
-    wings(true);
+    hwings(true);
     moveBot(10, 1, 100, false);
     turnBot(-160, 2, 20);
-    wings(false);
+    hwings(false);
     turnBot(90, 1, 50);
     moveBot(5, 1, 50, false);
     turnBot(-65, 1, 40);
@@ -30,9 +30,3 @@ void autonFromLSP () {
     moveBot(7, 1, 100, false);
 
 }
-
-//Trial #1: Code was incorrect, lurned left instead of going straight (incorrect code removed)
-//Trial #2: Triball did not outtake into goal
-//Trial #3: Field broke, causing robot to go under goal
-//Trial #4: Worked
-//Trial #5: Worked
