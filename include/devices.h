@@ -19,8 +19,8 @@ inline pros::Imu imu_sensor(19);
 inline pros::Rotation rotation_sensor(16);
 
 //Pneumatics
-inline pros::adi::Pneumatics hWingPistons('A', false);
-inline pros::adi::Pneumatics vWingPistons('B', false);
+inline pros::adi::Pneumatics leftWingPistons('B', false);
+inline pros::adi::Pneumatics rightWingPistons('A', false);
 inline pros::adi::Pneumatics blockerPistons('C', false);
 
 //Led

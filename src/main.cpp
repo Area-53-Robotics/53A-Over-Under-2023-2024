@@ -179,8 +179,8 @@ void opcontrol() {
   slapper_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
   // User Control State Variables
-  bool hWingsPistonValue = false;
-  bool vWingsPistonValue = false;
+  bool leftWingsPistonValue = false;
+  bool rightWingsPistonValue = false;
   bool blockerPistonValue = false;
 
   //LEDs
@@ -225,14 +225,14 @@ void opcontrol() {
 
     // Pistons
     // Controls Wings
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
-      hWingsPistonValue = !hWingsPistonValue;
-      hWingPistons.set_value(hWingsPistonValue);
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+      leftWingsPistonValue = !leftWingsPistonValue;
+      leftWingPistons.set_value(leftWingsPistonValue);
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      vWingsPistonValue = !vWingsPistonValue;
-      vWingPistons.set_value(vWingsPistonValue);
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+      rightWingsPistonValue = !rightWingsPistonValue;
+      rightWingPistons.set_value(rightWingsPistonValue);
     }
 
     //Slapper

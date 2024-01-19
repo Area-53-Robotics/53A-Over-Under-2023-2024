@@ -16,7 +16,8 @@ void skillsAuton () {
     turnBot(-90, 1, 60);
     moveBot(18, 2, 127, false);
     turnBot(-70, 1, 50);
-    hwings(true);
+    leftwings(true);
+    rightwings(true);
     moveBot(40, 2, 127, true);
 
 }

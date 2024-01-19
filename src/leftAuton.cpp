@@ -6,9 +6,11 @@ void autonFromLSP () {
     
     moveBot(20, 2, 90, false);
     turnBot(-90, 1, 50);
-    hwings(true);
+    leftwings(true);
+    rightwings(true);
     moveBot(20, 1, 127, true);
-    hwings(false);
+    leftwings(false);
+    rightwings(false);
     moveBot(10, 1, 100, false);
     runIntake(true, -100);
     pros::delay(1000);
@@ -19,10 +21,12 @@ void autonFromLSP () {
     moveBot(15, 1, 127, false);
     turnBot(60, 1, 40);
     moveBot(5, 1, 100, false);
-    hwings(true);
+    leftwings(true);
+    rightwings(true);
     moveBot(10, 1, 100, false);
     turnBot(-160, 2, 20);
-    hwings(false);
+    leftwings(false);
+    rightwings(false);
     turnBot(90, 1, 50);
     moveBot(5, 1, 50, false);
     turnBot(-65, 1, 40);

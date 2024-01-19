@@ -15,9 +15,11 @@ void autonFromRSP () {
     moveBot(8, 1, 127, false);
     turnBot(-45, 1, 50);
     runIntake(false, 0);
-    hwings(true);
+    leftwings(true);
+    rightwings(true);
     moveBot(30, 1, 127, true);
-    hwings(false);
+    leftwings(false);
+    rightwings(false);
     moveBot(10, 1, 127, false);
     turnBot(180, 1, 50);
     runIntake(true, -60);

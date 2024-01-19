@@ -193,15 +193,15 @@ void blocker (bool state) {
 
 }
 
-void hwings (bool state) {
+void leftwings (bool state) {
 
-	hWingPistons.set_value(state);
+	leftWingPistons.set_value(state);
 
 }
 
-void vwings (bool state) {
+void rightwings (bool state) {
 
-	vWingPistons.set_value(state);
+	rightWingPistons.set_value(state);
 
 }
 
