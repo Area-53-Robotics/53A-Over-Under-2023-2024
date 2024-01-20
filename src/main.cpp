@@ -135,12 +135,12 @@ void autonomous() {
   }
 
   if (starting_point == 3) {
-	pros::lcd::set_text(2, "Skills Auton Start");
-	skillsAuton();
+	  pros::lcd::set_text(2, "Skills Auton Start");
+	  skillsAuton();
   }
 
   if (starting_point == 0) {
-	pros::lcd::set_text(2, "Do Nothing");
+	  pros::lcd::set_text(2, "Do Nothing");
     noAuton();
   }
 
@@ -181,6 +181,7 @@ void opcontrol() {
   // User Control State Variables
   bool leftWingsPistonValue = false;
   bool rightWingsPistonValue = false;
+  bool wings = false;
   bool blockerPistonValue = false;
 
   //LEDs
@@ -225,14 +226,20 @@ void opcontrol() {
 
     // Pistons
     // Controls Wings
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
       leftWingsPistonValue = !leftWingsPistonValue;
       leftWingPistons.set_value(leftWingsPistonValue);
     }
 
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
       rightWingsPistonValue = !rightWingsPistonValue;
       rightWingPistons.set_value(rightWingsPistonValue);
+    }
+
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      wings = !wings;
+      rightWingPistons.set_value(wings);
+      leftWingPistons.set_value(wings);
     }
 
     //Slapper
