@@ -13,8 +13,8 @@
         "_UNICODE"
       ],
       "compilerPath": "/Users/Zoey/Library/Application Support/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-macos/bin/arm-none-eabi-g++",
-      "cStandard": "c17",
-      "cppStandard": "c++17",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
       "compileCommands": "/Users/Zoey/Desktop/Robotics Code/Robotics Code 2023 - 2024/53A/compile_commands.json",
       "macFrameworkPath": [

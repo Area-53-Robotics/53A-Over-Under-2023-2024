@@ -20,6 +20,7 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
 	while (true) {
 
 		double getRotation = left_motors.get_position();
+		printf("%e", getRotation);
 
 		float radius = 2;
 		float circumference = M_PI*radius*2;
@@ -49,6 +50,8 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
       		time_at_target += delay_time;
       		if (time_at_target > 500) {  // 500 Milliseconds
         		printf("move_pid met the target\n");
+				left_motors.brake();
+				right_motors.brake();
         		break;
       		}
     	} else {
@@ -58,6 +61,8 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
 		// Timeout
     	if (pros::millis() > end_time) {
       		printf("move_pid timed out\n");
+			left_motors.brake();
+			right_motors.brake();
       		break;
     	}
 

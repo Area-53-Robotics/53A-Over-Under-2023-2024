@@ -230,6 +230,7 @@ void opcontrol() {
       leftWingsPistonValue = !leftWingsPistonValue;
       leftWingPistons.set_value(leftWingsPistonValue);
     }
+    printf("%i", leftWingsPistonValue);
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)) {
       rightWingsPistonValue = !rightWingsPistonValue;
