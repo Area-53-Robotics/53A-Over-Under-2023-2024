@@ -32,3 +32,7 @@ void noAuton();
 
 //reset to rotation
 void resetandCata (bool onOff);
+
+//test
+void swing (bool side, float targetRotation, int timeout, int maxPower);
+void fullspeed(bool direction, bool start);

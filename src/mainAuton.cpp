@@ -114,6 +114,8 @@ void turnBot (float targetRotation, int timeout, int maxPower) {
     		time_at_target += delay_time;
     		if (time_at_target > 500) { 
         		printf("turn_pid met the target\n");
+				left_motors.brake();
+				right_motors.brake();
         		break;
     		}
     	} else {
@@ -123,6 +125,8 @@ void turnBot (float targetRotation, int timeout, int maxPower) {
     	// Timeout
     	if (pros::millis() > end_time) {
       		printf("turn_pid timed out\n");
+			left_motors.brake();
+			right_motors.brake();
      		break;
     	}
 	}
@@ -247,4 +251,84 @@ void resetandCata (bool onOff) {
 			break;
 		}
 	}
+}
+
+void swing (bool side, float targetRotation, int timeout, int maxPower) {
+	imu_sensor.tare();
+	left_motors.tare_position();
+
+	float delay_time = 10;
+  	double end_time = pros::millis() + timeout * 1000;
+  	double time_elapsed = 0;
+  	double time_at_target = 0;
+	float previousTurnError;
+
+  	const double kp = 0.8;
+  	const double kd = 0.5;
+
+	while (true) {
+
+		float getSensorData = imu_sensor.get_rotation();
+
+		float turnError = targetRotation - getSensorData;
+		float turnDerivative = turnError - previousTurnError;
+		float previousTurnError = turnError;
+		float power = turnError*kp + turnDerivative*kd;
+
+		if (power > maxPower) {
+			power = maxPower;
+		}
+
+		int leftPower = power;
+		int rightPower = -power;
+
+		if (side == true) {
+			right_motors = power;
+		} else {
+			left_motors = power;
+		}
+
+		// check exit conditions
+    	if (turnError < 0.5 and turnError > -0.5) {
+    		time_at_target += delay_time;
+    		if (time_at_target > 500) { 
+        		printf("turn_pid met the target\n");
+				left_motors.brake();
+				right_motors.brake();
+        		break;
+    		}
+    	} else {
+      		time_at_target = 0;
+    	}
+
+    	// Timeout
+    	if (pros::millis() > end_time) {
+      		printf("turn_pid timed out\n");
+			left_motors.brake();
+			right_motors.brake();
+     		break;
+		}
+	}
+}
+
+void fullspeed (bool direction, bool start) {
+
+	while (true) {
+		int power;
+		if (direction == true) {
+			power = 127;
+		} else {
+			power = -127;
+		}
+
+		left_motors = power;
+		right_motors = power;
+
+		if (start == false) {
+			left_motors.brake();
+			right_motors.brake();
+			break;
+		}
+	}
+	
 }

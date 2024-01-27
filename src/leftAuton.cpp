@@ -10,7 +10,7 @@ void autonFromLSP () {
     rightwings(true);
     moveBot(20, 1, 127, true);
     leftwings(false);
-    rightwings(false);
+    rightwings(false); 
     moveBot(10, 1, 100, false);
     runIntake(true, -100);
     pros::delay(1000);
