@@ -243,6 +243,12 @@ void opcontrol() {
       leftWingPistons.set_value(wings);
     }
 
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+      blockerPistonValue = !blockerPistonValue;
+      blockerPistons.set_value(blockerPistonValue);
+      blockerPistons.set_value(blockerPistonValue);
+    }
+
     //Slapper
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       slapperstate = !slapperstate;
