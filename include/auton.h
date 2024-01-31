@@ -10,7 +10,7 @@ void turnBot (float turnDegree, int timeout, int maxPower);
 void runIntake (bool running, int power);
 
 //Catapult
-void runCata (float msec, int power);
+void shoot (float msec, int power);
 void cataRotationReset (float time);
 
 //Pistons

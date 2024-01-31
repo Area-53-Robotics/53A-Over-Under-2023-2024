@@ -4,17 +4,29 @@
 
 void autonFromLSP () {
     
+    
     runIntake(true, -127);
     pros::delay(100);
     runIntake(true, 127);
-    moveBot(42, 1, 127, false);
+    moveBot(45, 1, 127, false);
     pros::delay(500);
-    moveBot(30, 1, 100, true);
+    moveBot(55, 1, 127, true);
     turnBot(70, 1, 50);
     runIntake(true, -127);
     pros::delay(500);
+    /*
+    moveBot(1, 1, 15, true);
     turnBot(-55, 1, 50);
     runIntake(true, 127);
-    moveBot(340, 1, 127, false);
-
+    moveBot(53, 1, 127, false);
+    pros::delay(500);
+    //swing(true, 20, 1, 50);
+    moveBot(40, 1, 127, true);
+    turnBot(70, 1, 50);
+    runIntake(true, -127);
+    pros::delay(500);
+    */
+    swing(true, 20, 1, 50);
+    moveBot(40, 1, 127, false);
+    
 }

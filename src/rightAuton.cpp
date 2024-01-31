@@ -4,6 +4,8 @@
 
 void autonFromRSP () {
     
+    runIntake(true, -127);
+    pros::delay(100);
     runIntake(true, 127);
     moveBot(40, 1, 127, false);
     pros::delay(500);

@@ -146,11 +146,11 @@ void runIntake (bool running, int power) {
 
 }
 
-void runCata (float msecs, int power) {
+void shoot (float msecs, int power) {
 
-	bool cata = true;
+	bool shoot = true;
 
-	while (cata) {
+	while (shoot) {
 
 		slapper_motor = power;
 		pros::delay(msecs);
