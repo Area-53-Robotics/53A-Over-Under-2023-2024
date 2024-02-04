@@ -21,7 +21,9 @@ inline pros::Rotation rotation_sensor(16);
 //Pneumatics
 inline pros::adi::Pneumatics leftWingPistons('B', false);
 inline pros::adi::Pneumatics rightWingPistons('A', false);
+inline pros::adi::Pneumatics frontrightWingPistons('D', false);
+inline pros::adi::Pneumatics frontleftWingPistons('E', false);
 inline pros::adi::Pneumatics blockerPistons('C', false);
 
 //Led
-inline pros::adi::LED color('D', 12);
+inline pros::adi::LED color('G', 12);

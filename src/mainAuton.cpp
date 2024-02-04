@@ -214,6 +214,18 @@ void rightwings (bool state) {
 
 }
 
+void frontrightwings (bool state) {
+
+	frontrightWingPistons.set_value(state);
+
+}
+
+void frontleftwings (bool state) {
+
+	frontleftWingPistons.set_value(state);
+
+}
+
 void noAuton () {
 
 }

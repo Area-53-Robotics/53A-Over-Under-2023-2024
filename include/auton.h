@@ -17,6 +17,8 @@ void cataRotationReset (float time);
 void blocker (bool state);
 void leftwings (bool state);
 void rightwings (bool state);
+void frontleftwings (bool state);
+void frontrightwings (bool state);
 
 //leftAuton.cpp
 void autonFromLSP ();

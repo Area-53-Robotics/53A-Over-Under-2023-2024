@@ -81,6 +81,8 @@ void initialize() {
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
 
+  blockerPistons.set_value(false);
+
   /*
   rd::initialize();
   rd::register_views({ &console, &selector });
@@ -176,6 +178,7 @@ bool isCataReady(float cataPosition) {
 }
 */
 void opcontrol() {
+
   slapper_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
   // User Control State Variables
@@ -183,6 +186,7 @@ void opcontrol() {
   bool rightWingsPistonValue = false;
   bool wings = false;
   bool blockerPistonValue = false;
+  bool frontWings = false;
 
   //LEDs
   bool ledsOn = false;
@@ -193,6 +197,8 @@ void opcontrol() {
 
   //slapper
   bool slapperstate = false;
+
+  blockerPistons.set_value(false);
   
   /*
   enum class CatapultState {
@@ -237,6 +243,12 @@ void opcontrol() {
       rightWingPistons.set_value(rightWingsPistonValue);
     }
 
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      frontWings = !frontWings;
+      frontrightWingPistons.set_value(frontWings);
+      frontleftWingPistons.set_value(frontWings);
+    }
+
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       wings = !wings;
       rightWingPistons.set_value(wings);
@@ -245,7 +257,6 @@ void opcontrol() {
 
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       blockerPistonValue = !blockerPistonValue;
-      blockerPistons.set_value(blockerPistonValue);
       blockerPistons.set_value(blockerPistonValue);
     }
 
@@ -264,6 +275,10 @@ void opcontrol() {
       slapper_motor = 127;
     } else {
       slapper_motor = 0;
+    }
+
+    if (pros::millis() == 119998) {
+      blockerPistons.set_value(true);
     }
 
     /*
