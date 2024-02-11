@@ -6,13 +6,14 @@
 void skillsAuton () {
     
     blocker(false);
-    swing(true, -19.2, 1, 50);
-    shoot(10000, 105);
+    shoot(45000, 127);
+    moveBot(2, 1, 15, true);
+    shoot(300, 127);
     turnBot(40, 1, 50);
-    moveBot(40, 1, 127, true);
+    moveBot(60, 2, 127, true);
     leftwings(true);
+    turnBot(-40, 1, 50);
     rightwings(true);
-    turnBot(-30, 1, 50);
     moveBot(30, 1, 50, true);
 
 

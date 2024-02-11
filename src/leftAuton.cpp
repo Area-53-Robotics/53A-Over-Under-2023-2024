@@ -17,11 +17,11 @@ void autonFromLSP () {
     moveBot(2, 1, 15, true);
     turnBot(55, 1, 50);
     moveBot(3, 1, 127, true);
-    moveBot(3, 1, 100, false);
     leftwings(true);
-    moveBot(14, 1, 100, false);
+    moveBot(20, 1, 127, false);
     leftwings(false);
-    turnBot(-45, 1, 50);
-    moveBot(17, 1, 50, false);
+    moveBot(2, 1, 20, true);
+    turnBot(-47, 1, 50);
+    moveBot(28, 1, 127, false);
     
 }
