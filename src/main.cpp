@@ -164,19 +164,19 @@ void autonomous() {
  */
 
 // Angles are in centidegrees
-/*
+
 const float MIN_CATA_READY_ANGLE = 4000;
 const float MAX_CATA_READY_ANGLE = 5500;
 
-bool isCataReady(float cataPosition) {
-  if (cataPosition < MIN_CATA_READY_ANGLE or
-      cataPosition > MAX_CATA_READY_ANGLE) {
+bool isCataReady(float slapperPosition) {
+  if (slapperPosition < MIN_CATA_READY_ANGLE or
+      slapperPosition > MAX_CATA_READY_ANGLE) {
     return false;
   } else {
     return true;
   }
 }
-*/
+
 void opcontrol() {
 
   slapper_motor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
@@ -200,16 +200,14 @@ void opcontrol() {
 
   blockerPistons.set_value(false);
   
-  /*
-  enum class CatapultState {
+  enum class SlapperState {
     Resetting,
     Ready,
-    SingleFire,
     ConstantFire,
   };
 
-  CatapultState catapultState = CatapultState::Resetting;
-  */
+  SlapperState slapperState = SlapperState::Resetting;
+
   while (true) {
     // Drivetrain
     // Arcade Drive
@@ -272,74 +270,32 @@ void opcontrol() {
     }
 
     if (slapperstate == true) {
-      slapper_motor = 127;
+      slapperState = SlapperState::ConstantFire;
     } else {
-      slapper_motor = 0;
+      slapperState = SlapperState::Resetting;
     }
 
-    if (pros::millis() == 119998) {
-      blockerPistons.set_value(true);
-    }
-
-    /*
-    // Controls arm
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-      armPistonValue = !armPistonValue;
-      armPiston.set_value(armPistonValue);
-    }
-    */
-
-    // Repeat Fire Slapper
-    /*
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-      if (catapultState == CatapultState::ConstantFire) {
-        catapultState = CatapultState::Resetting;
-      } else {
-        catapultState = CatapultState::ConstantFire;
-      }
-    }
-
-    // Shoots catapult when pressed
-    if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-      if (catapultState == CatapultState::Ready) {
-        catapultState = CatapultState::SingleFire;
-      }
-    }
-
-    int catapultPosition = rotation_sensor.get_angle();
-
-	//double getRotation = left_motors.get_positions()[0];
-
-	//printf("%f\n", getRotation);
-
-	printf("%i\n", catapultPosition);
-
+    int slapperPosition = rotation_sensor.get_angle();
   
-    switch (catapultState) {
-    case CatapultState::Resetting:
+    switch (slapperState) {
+    case SlapperState::Resetting:
       slapper_motor.move(80);
-      if (isCataReady(catapultPosition)) {
-        catapultState = CatapultState::Ready;
+      if (isCataReady(slapperPosition)) {
+        slapperState = SlapperState::Ready;
       }
       break;
-    case CatapultState::Ready:
-      if (!isCataReady(catapultPosition)) {
-        catapultState = CatapultState::Resetting;
+    case SlapperState::Ready:
+      if (!isCataReady(slapperPosition)) {
+        slapperState = SlapperState::Resetting;
       }
       slapper_motor.brake();
       break;
-    case CatapultState::SingleFire:
-      slapper_motor.move(127);
-      if (!isCataReady(catapultPosition)) {
-        catapultState = CatapultState::Resetting;
-      }
-      break;
-    case CatapultState::ConstantFire:
+    case SlapperState::ConstantFire:
       slapper_motor.move(127);
       break;
     }
-  */
 	
+/*
   // Print out the temperature of Motors
   
   double rightDriveTemperatures = right_motors.get_temperature();
@@ -358,5 +314,7 @@ void opcontrol() {
 	}
 
     pros::delay(20); 
+  }
+*/
   }
 }
