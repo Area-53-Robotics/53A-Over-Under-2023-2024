@@ -18,6 +18,7 @@ int starting_point = 0;
  * "I was pressed!" and nothing.
  */
 
+/*
 void on_center_button() {
   static bool pressed = false;
   pressed = !pressed;
@@ -44,7 +45,7 @@ void on_left_button() {
     pros::lcd::set_text(1, "Left Auton");
   } 
 }
-
+*/
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -62,6 +63,7 @@ void initialize() {
 
   printf("%i\n", starting_point);
   */
+  /*
   if (starting_point == 0) {
 	pros::lcd::set_text(1, "No Auton");
   } else if (starting_point == 1) {
@@ -80,7 +82,7 @@ void initialize() {
 
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
-
+*/
   blockerPistons.set_value(false);
 
   /*
@@ -100,7 +102,26 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+  while (true) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      starting_point++;
+      if (starting_point > 3) {
+        starting_point = 0;
+      }
+    }
+
+    if (starting_point == 0) {
+      master.print(0, 0, "No Auton");
+    } else if (starting_point == 1) {
+      master.print(0, 0, "Left Auton (Close Side)");
+    } else if (starting_point == 2) {
+      master.print(0, 0, "Right Auton (Far Side)");
+    } else if (starting_point == 3) {
+      master.print(0, 0, "Skills Auton");
+    }
+  }
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -270,12 +291,15 @@ void opcontrol() {
     }
 
     if (slapperstate == true) {
-      slapperState = SlapperState::ConstantFire;
+      slapper_motor = 127;
+      //slapperState = SlapperState::ConstantFire;
     } else {
-      slapperState = SlapperState::Resetting;
+      slapper_motor = 0;
     }
 
     int slapperPosition = rotation_sensor.get_angle();
+
+    printf("\n%i", slapperPosition);
   
     switch (slapperState) {
     case SlapperState::Resetting:
