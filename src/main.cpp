@@ -186,8 +186,8 @@ void autonomous() {
 
 // Angles are in centidegrees
 
-const float MIN_CATA_READY_ANGLE = 4000;
-const float MAX_CATA_READY_ANGLE = 5500;
+const float MIN_CATA_READY_ANGLE = 25000;
+const float MAX_CATA_READY_ANGLE = 27000;
 
 bool isCataReady(float slapperPosition) {
   if (slapperPosition < MIN_CATA_READY_ANGLE or
@@ -291,15 +291,15 @@ void opcontrol() {
     }
 
     if (slapperstate == true) {
-      slapper_motor = 127;
-      //slapperState = SlapperState::ConstantFire;
+      slapperState = SlapperState::ConstantFire;
     } else {
-      slapper_motor = 0;
+      slapperState = SlapperState::Resetting;
     }
 
     int slapperPosition = rotation_sensor.get_angle();
 
     printf("\n%i", slapperPosition);
+  
   
     switch (slapperState) {
     case SlapperState::Resetting:
@@ -318,7 +318,7 @@ void opcontrol() {
       slapper_motor.move(127);
       break;
     }
-	
+
 /*
   // Print out the temperature of Motors
   
@@ -336,9 +336,7 @@ void opcontrol() {
 	} else {
 		color.clear_all();
 	}
-
-    pros::delay(20); 
-  }
 */
+  pros::delay(20);
   }
 }
