@@ -4,6 +4,7 @@
 #include "devices.h"
 #include <sys/_intsup.h>
 #include <iostream>
+#include "pros/misc.h"
 #include "robodash/views/selector.hpp"
 #include "robodash/views/image.hpp"
 
@@ -18,7 +19,7 @@ int starting_point = 0;
  * "I was pressed!" and nothing.
  */
 
-/*
+
 void on_center_button() {
   static bool pressed = false;
   pressed = !pressed;
@@ -45,7 +46,7 @@ void on_left_button() {
     pros::lcd::set_text(1, "Left Auton");
   } 
 }
-*/
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -53,17 +54,9 @@ void on_left_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  /*
-  if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2)) {
-    starting_point++;
-  }
-  if (starting_point > 3) {
-	starting_point = 0;
-  }
 
-  printf("%i\n", starting_point);
-  */
-  /*
+  //printf("%i\n", starting_point);
+  
   if (starting_point == 0) {
 	pros::lcd::set_text(1, "No Auton");
   } else if (starting_point == 1) {
@@ -82,7 +75,7 @@ void initialize() {
 
   imu_sensor.reset();
   pros::lcd::set_text(3, "IMU Calibrated");
-*/
+
   blockerPistons.set_value(false);
 
   /*
@@ -102,26 +95,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-  while (true) {
-    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-      starting_point++;
-      if (starting_point > 3) {
-        starting_point = 0;
-      }
-    }
-
-    if (starting_point == 0) {
-      master.print(0, 0, "No Auton");
-    } else if (starting_point == 1) {
-      master.print(0, 0, "Left Auton (Close Side)");
-    } else if (starting_point == 2) {
-      master.print(0, 0, "Right Auton (Far Side)");
-    } else if (starting_point == 3) {
-      master.print(0, 0, "Skills Auton");
-    }
-  }
-}
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -132,7 +106,31 @@ void disabled() {
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+  /*
+  master.print(2, 0, "No Auton");
+  while (true) {
+    if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+      starting_point++;
+      if (starting_point > 3) {
+        starting_point = 0;
+      }
+    }
+
+    printf("\n%d", master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A));
+
+    if (starting_point == 0) {
+      master.print(2, 0, "No Auton");
+    } else if (starting_point == 1) {
+      master.print(2, 0, "Left Auton (Close Side)");
+    } else if (starting_point == 2) {
+      master.print(2, 0, "Right Auton (Far Side)");
+    } else if (starting_point == 3) {
+      master.print(2, 0, "Skills Auton");
+    }
+  }
+  */
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -186,10 +184,10 @@ void autonomous() {
 
 // Angles are in centidegrees
 
-const float MIN_CATA_READY_ANGLE = 25000;
-const float MAX_CATA_READY_ANGLE = 27000;
+const float MIN_CATA_READY_ANGLE = 309000;
+const float MAX_CATA_READY_ANGLE = 310000;
 
-bool isCataReady(float slapperPosition) {
+bool isSlapperReady(float slapperPosition) {
   if (slapperPosition < MIN_CATA_READY_ANGLE or
       slapperPosition > MAX_CATA_READY_ANGLE) {
     return false;
@@ -267,13 +265,13 @@ void opcontrol() {
       frontrightWingPistons.set_value(frontWings);
       frontleftWingPistons.set_value(frontWings);
     }
-
+    
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
       wings = !wings;
       rightWingPistons.set_value(wings);
       leftWingPistons.set_value(wings);
     }
-
+    
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
       blockerPistonValue = !blockerPistonValue;
       blockerPistons.set_value(blockerPistonValue);
@@ -281,7 +279,14 @@ void opcontrol() {
 
     //Slapper
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-      slapperstate = !slapperstate;
+      //slapperstate = !slapperstate;
+      
+      if (slapperState == SlapperState::ConstantFire) {
+         slapperState = SlapperState::Resetting;
+       } else {
+         slapperState = SlapperState::ConstantFire;
+       }
+       
     } 
 
     //Blocker/Climb
@@ -290,26 +295,28 @@ void opcontrol() {
       blockerPistons.set_value(blockerPistonValue);
     }
 
-    if (slapperstate == true) {
-      slapperState = SlapperState::ConstantFire;
+    /*
+    if (slapperstate) {
+      slapper_motor = 127;
     } else {
-      slapperState = SlapperState::Resetting;
+      slapper_motor = 0;
     }
+    */
 
     int slapperPosition = rotation_sensor.get_angle();
 
     printf("\n%i", slapperPosition);
   
-  
+    
     switch (slapperState) {
     case SlapperState::Resetting:
       slapper_motor.move(80);
-      if (isCataReady(slapperPosition)) {
+      if (isSlapperReady(slapperPosition)) {
         slapperState = SlapperState::Ready;
       }
       break;
     case SlapperState::Ready:
-      if (!isCataReady(slapperPosition)) {
+      if (!isSlapperReady(slapperPosition)) {
         slapperState = SlapperState::Resetting;
       }
       slapper_motor.brake();
@@ -318,6 +325,7 @@ void opcontrol() {
       slapper_motor.move(127);
       break;
     }
+
 
 /*
   // Print out the temperature of Motors
