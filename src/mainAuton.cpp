@@ -13,7 +13,7 @@ void moveBot (float targetDistance, int timeout, int maxPower, bool reversed) {
 	int time_at_target = 0;
 	int delay_time = 20;
 	int start_time = pros::millis();
-	int end_time = start_time + 1000 * timeout;
+	int end_time = start_time + 900 * timeout;
 
 	float previousMoveError;
 
@@ -74,7 +74,7 @@ void turnBot (float targetRotation, int timeout, int maxPower) {
 	left_motors.tare_position();
 
 	float delay_time = 10;
-  	double end_time = pros::millis() + timeout * 1000;
+  	double end_time = pros::millis() + timeout * 700;
   	double time_elapsed = 0;
   	double time_at_target = 0;
 	float previousTurnError;
