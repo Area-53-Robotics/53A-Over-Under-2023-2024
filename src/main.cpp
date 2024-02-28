@@ -184,8 +184,8 @@ void autonomous() {
 
 // Angles are in centidegrees
 
-const float MIN_CATA_READY_ANGLE = 309000;
-const float MAX_CATA_READY_ANGLE = 310000;
+const float MIN_CATA_READY_ANGLE = 35000;
+const float MAX_CATA_READY_ANGLE = 41000;
 
 bool isSlapperReady(float slapperPosition) {
   if (slapperPosition < MIN_CATA_READY_ANGLE or
@@ -281,11 +281,13 @@ void opcontrol() {
     if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
       //slapperstate = !slapperstate;
       
+      
       if (slapperState == SlapperState::ConstantFire) {
          slapperState = SlapperState::Resetting;
        } else {
          slapperState = SlapperState::ConstantFire;
        }
+      
        
     } 
 
@@ -310,7 +312,7 @@ void opcontrol() {
     
     switch (slapperState) {
     case SlapperState::Resetting:
-      slapper_motor.move(80);
+      slapper_motor.move(50);
       if (isSlapperReady(slapperPosition)) {
         slapperState = SlapperState::Ready;
       }
@@ -325,7 +327,7 @@ void opcontrol() {
       slapper_motor.move(127);
       break;
     }
-
+  
 
 /*
   // Print out the temperature of Motors

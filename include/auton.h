@@ -38,3 +38,5 @@ void resetandCata (bool onOff);
 //test
 void swing (bool side, float targetRotation, int timeout, int maxPower);
 void fullspeed(bool direction, bool start);
+
+void curveBot (float targetDistance, int timeout, int maxPower, bool reversed, int curve, bool right);

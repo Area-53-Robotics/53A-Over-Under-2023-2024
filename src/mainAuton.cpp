@@ -344,3 +344,82 @@ void fullspeed (bool direction, bool start) {
 	}
 	
 }
+
+void curveBot (float targetDistance, int timeout, int maxPower, bool reversed, int curve, bool right) {
+	imu_sensor.tare();
+	left_motors.tare_position();
+
+	int movePower;
+	const float kP = 0.6;
+	const float kD = 0;
+	int time_at_target = 0;
+	int delay_time = 20;
+	int start_time = pros::millis();
+	int end_time = start_time + 1000 * timeout;
+
+	float previousMoveError;
+
+	while (true) {
+
+		double getRotation = left_motors.get_position();
+		printf("%e", getRotation);
+
+		float radius = 2;
+		float circumference = M_PI*radius*2;
+		float position = (getRotation/360)*circumference;
+
+		float moveError = targetDistance - position;
+		printf("%f\n", moveError);
+		float moveDerivative = moveError - previousMoveError;
+		float previousMoveError = moveError;
+		movePower = (moveError*kP) + moveDerivative + 15;
+
+		movePower += 20;
+    	if (movePower > maxPower) {
+      		movePower = maxPower;
+    	}
+
+		if (reversed) {
+			movePower = -movePower;
+		} else {
+			movePower = movePower;
+		}
+
+		if (right) {
+			if (movePower > 0) {
+				right_motors = movePower - curve;
+			} else {
+				right_motors = movePower + curve;
+			}
+			left_motors = movePower;
+		} else {
+			if (movePower > 0) {
+				left_motors = movePower - curve;
+			} else {
+				left_motors = movePower + curve;
+			}
+			right_motors = movePower;
+		}
+
+		if (moveError < 0.5 and moveError > -0.5) {
+      		time_at_target += delay_time;
+      		if (time_at_target > 500) {  // 500 Milliseconds
+        		printf("move_pid met the target\n");
+				left_motors.brake();
+				right_motors.brake();
+        		break;
+      		}
+    	} else {
+      		time_at_target = 0;
+    	}
+
+		// Timeout
+    	if (pros::millis() > end_time) {
+      		printf("move_pid timed out\n");
+			left_motors.brake();
+			right_motors.brake();
+      		break;
+    	}
+
+	}
+}

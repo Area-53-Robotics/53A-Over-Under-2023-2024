@@ -5,6 +5,7 @@
 
 void skillsAuton () {
     
+    /*
     blocker(false);
     shoot(45000, 127);
     moveBot(2, 1, 15, true);
@@ -15,6 +16,8 @@ void skillsAuton () {
     turnBot(-40, 1, 50);
     rightwings(true);
     moveBot(30, 1, 50, true);
+    */
 
+    curveBot(5, 1, 50, true, 30, false);
 
 }
