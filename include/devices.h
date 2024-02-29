@@ -12,7 +12,7 @@ inline pros::MotorGroup right_motors ({10, -19, 20});
 inline pros::Motor intake_motor (3);
 
 //Catapult motor
-inline pros::Motor slapper_motor (-18);
+inline pros::Motor slapper_motor (-17);
 
 //Sensors
 inline pros::Imu imu_sensor(15);
