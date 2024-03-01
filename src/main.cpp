@@ -312,7 +312,7 @@ void opcontrol() {
     
     switch (slapperState) {
     case SlapperState::Resetting:
-      slapper_motor.move(50);
+      slapper_motor.move(60);
       if (isSlapperReady(slapperPosition)) {
         slapperState = SlapperState::Ready;
       }
