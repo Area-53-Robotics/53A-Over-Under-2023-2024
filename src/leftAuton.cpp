@@ -5,7 +5,7 @@
 void autonFromLSP () {
     
     blocker(false);
-    runIntake(true, -127);
+    runIntake(true, 127);
     pros::delay(100);
     runIntake(false, 0);
     moveBot(5, 1, 20, true);
@@ -14,7 +14,7 @@ void autonFromLSP () {
     rightwings(false);
     turnBot(45, 1, 50);
     curveBot(10, 1, 90, false, 40, true);
-    turnBot(-40, 1, 50);
+    turnBot(-50, 1, 50);
     runIntake(true, -127);
     moveBot(15, 1, 100, false);
     //moveBot(15, 1, 50, false);

@@ -155,8 +155,9 @@ void shoot (float msecs, int power) {
 		slapper_motor = power;
 		pros::delay(msecs);
 		slapper_motor = 0;
-
 		break;
+		
+
 	}
 
 }

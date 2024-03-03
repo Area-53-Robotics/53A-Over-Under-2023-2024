@@ -227,6 +227,12 @@ void opcontrol() {
 
   SlapperState slapperState = SlapperState::Resetting;
 
+  rightWingPistons.set_value(false);
+  leftWingPistons.set_value(false);
+  frontrightWingPistons.set_value(false);
+  frontleftWingPistons.set_value(false);
+
+
   while (true) {
     // Drivetrain
     // Arcade Drive
@@ -312,7 +318,7 @@ void opcontrol() {
     
     switch (slapperState) {
     case SlapperState::Resetting:
-      slapper_motor.move(60);
+      slapper_motor.move(50);
       if (isSlapperReady(slapperPosition)) {
         slapperState = SlapperState::Ready;
       }
@@ -324,7 +330,7 @@ void opcontrol() {
       slapper_motor.brake();
       break;
     case SlapperState::ConstantFire:
-      slapper_motor.move(127);
+      slapper_motor.move(100);
       break;
     }
   
